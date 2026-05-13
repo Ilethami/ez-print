@@ -39,7 +39,7 @@ export async function signup() {
 
     alert("Account created!");
 
-    window.location.href = <Link to="/client-login" ></Link>;
+    window.location.href = <Link to="/client-login" />;
 }
 
 export async function login() {
@@ -98,7 +98,7 @@ export async function loadUserOrders() {
         url += `?state=${filter}`;
     }
 
-    const response = await fetch(url , { 
+    const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -208,6 +208,6 @@ export async function submitReceipt() {
 
 export function logout() {
     localStorage.removeItem("usr_token");
-    window.location.href = <Link to="/" ></Link>;
+    window.location.href = <Link to="/" />;
 }
 
