@@ -1,176 +1,213 @@
+import { Link } from "react-router-dom";
+export function formatTimestamp(timestamp) {
+    if (!timestamp) {
+        return "Pending";
+    }
+
+    return new Date(timestamp).toLocaleString("en-PH", {
+        timeZone: "Asia/Manila",
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
+}
+
 export async function signup() {
-  const payload = {
-    name: document.getElementById("signup-name").value,
-    email: document.getElementById("signup-email").value,
-    pw_hash: document.getElementById("signup-password").value, // matches backend
-  };
+    const payload = {
+        name: document.getElementById("signup-name").value,
+        email: document.getElementById("signup-email").value,
+        pw_hash: document.getElementById("signup-password").value // matches backend
+    };
 
-  const response = await fetch(
-    "http://localhost:3001/user/new_account",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    },
-  );
+    const response = await fetch("api/user/new_account", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
 
-  const text = await response.text();
+    const text = await response.text();
 
-  if (!response.ok) {
-    console.error("Signup failed:", text);
-    return;
-  }
+    if (!response.ok) {
+        console.error("Signup failed:", text);
+        return;
+    }
 
-  const res = JSON.parse(text);
+    const res = JSON.parse(text);
 
-  console.log("Created user:", res);
+    console.log("Created user:", res);
 
-  alert("Account created!");
+    alert("Account created!");
+
+    window.location.href = <Link to="/client-login" />;
 }
 
 export async function login() {
-  const payload = {
-    username: document.getElementById("login-name").value,
-    pw: document.getElementById("login-password").value,
-  };
+    const payload = {
+        name: document.getElementById("login-name").value,
+        pw: document.getElementById("login-password").value
+    };
 
-  const response = await fetch("http://localhost:3001/user/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+    const response = await fetch("api/user/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
 
-  const token = await response.json();
+    const token = await response.json();
 
-  if (!response.ok) {
-    console.error("Login failed:", text);
-    alert("Invalid credentials");
-    return;
-  }
+    if (!response.ok) {
+        console.error("Login failed:", text);
+        alert("Invalid credentials");
+        return;
+    }
 
-  console.log("token :", token);
 
-  // ✅ store session
-  localStorage.setItem("usr_token", token);
+    console.log("token :", token);
 
-  alert("Welcome Back");
+    // ✅ store session
+    localStorage.setItem("usr_token", token);
 
-  // ✅ load orders immediately
-  loadUserOrders();
+    alert("Welcome Back");
+
+    loadUserOrders();
 }
 
+
+export function apply_UserFilter() {
+    loadUserOrders();
+}
+
+
 export async function loadUserOrders() {
-  const token = localStorage.getItem("usr_token");
+    const token = localStorage.getItem("usr_token");
 
-  if (!token) {
-    console.log("No user logged in");
-    return;
-  }
+    if (!token) {
+        console.log("No user logged in");
+        return;
+    }
 
-  const response = await fetch("http://localhost:3001/user/orders", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
-  });
 
-  const text = await response.text();
+    const filter = document.getElementById("order-filter").value;
 
-  if (!response.ok) {
-    console.error("Failed to load orders:", text);
-    return;
-  }
+    let url = "api/user/orders";
 
-  const orders = JSON.parse(text);
+    if (filter) {
+        url += `?state=${filter}`;
+    }
 
-  console.log("Orders:", orders);
+    const response = await fetch(url , { 
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        }
+    });
 
-  renderUserOrders(orders);
+    const text = await response.text();
+
+    if (!response.ok) {
+        console.error("Failed to load orders:", text);
+        return;
+    }
+
+    const orders = JSON.parse(text);
+
+    console.log("Orders:", orders);
+
+    renderUserOrders(orders);
 }
 
 export function renderUserOrders(orders) {
-  const container = document.getElementById("orders-container");
+    const container = document.getElementById("usr_orders-container");
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-  if (!orders.length) {
-    container.innerHTML = "<p>No orders yet</p>";
-    return;
-  }
+    if (!orders.length) {
+        container.innerHTML = "<p>No orders yet</p>";
+        return;
+    }
 
-  orders.forEach((order) => {
-    const div = document.createElement("div");
+    orders.forEach(order => {
+        const div = document.createElement("div");
 
-    div.innerHTML = `
+        div.innerHTML = `
             <h3>Order: ${order.o_pub_id}</h3>
             <p>Vendor: ${order.brand}</p>
             <p>Status: ${order.status}</p>
             <p>Total: ${order.total}</p>
+            <p>created on: ${formatTimestamp(order.created_at)}</p>
+            <p>paid on: ${formatTimestamp(order.paid_at)}</p>
+            <p>claimed on: ${formatTimestamp(order.claimed_at)}</p>
+            <p>completed on: ${formatTimestamp(order.completed_at)}</p>
+
+
 
             <button onclick="openPayment('${order.o_pub_id}', '${order.v_pub_id}')">
                 Pay
             </button>
         `;
 
-    container.appendChild(div);
-  });
+        container.appendChild(div);
+    });
 }
 
 let currentOrderId = null;
 
 export async function openPayment(orderId, vendorId) {
-  currentOrderId = orderId;
+    currentOrderId = orderId;
 
-  const response = await fetch(
-    `http://localhost:3001/order/${vendorId}/gcash`,
-  );
+    const response = await fetch(`api/order/${vendorId}/gcash`);
 
-  if (!response.ok) {
-    console.error("Failed to load GCash QR");
-    return;
-  }
+    if (!response.ok) {
+        console.error("Failed to load GCash QR");
+        return;
+    }
 
-  const blob = await response.blob();
+    const blob = await response.blob();
 
-  const imgUrl = URL.createObjectURL(blob);
+    const imgUrl = URL.createObjectURL(blob);
 
-  document.getElementById("gcash-img").src = imgUrl;
+    document.getElementById("gcash-img").src = imgUrl;
 
-  document.getElementById("payment-section").style.display = "block";
+    document.getElementById("payment-section").style.display = "block";
 }
 
 export async function submitReceipt() {
-  const fileInput = document.getElementById("receipt-input");
-  const file = fileInput.files[0];
+    const fileInput = document.getElementById("receipt-input");
+    const file = fileInput.files[0];
 
-  if (!file) {
-    alert("Please select a file");
-    return;
-  }
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
 
-  const formData = new FormData();
-  formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-  const response = await fetch(
-    `http://localhost:3001/order/${currentOrderId}/submit_reciept`,
-    {
-      method: "POST",
-      body: formData,
-    },
-  );
+    const response = await fetch(
+        `api/order/${currentOrderId}/submit_reciept`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
 
-  if (!response.ok) {
-    alert("Upload failed");
-    return;
-  }
+    if (!response.ok) {
+        alert("Upload failed");
+        return;
+    }
 
-  alert("Receipt submitted!");
+    alert("Receipt submitted!");
 
-  // optional refresh
-  loadUserOrders();
+    // optional refresh
+    loadUserOrders();
 }
+
+export function logout() {
+    localStorage.removeItem("usr_token");
+    window.location.href = <Link to="/" />;
+}
+

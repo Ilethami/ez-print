@@ -9,18 +9,9 @@ import ClientSignup from "../Login/ClientSignup.jsx";
 import ezIcon from "../assets/ezicon.png";
 export default function Home() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/">
       <Routes>
-        <Route
-          path="/"
-          element={
-            <img
-              src={ezIcon}
-              alt="EzPrint Icon"
-              style={{ display: "none" }}
-            />
-          }
-        />
+
         <Route path="/vendor-map" element={<VendorMap />} />
         <Route path="/client-login" element={<ClientLogin />} />
         <Route path="/client-signup" element={<ClientSignup />} />
