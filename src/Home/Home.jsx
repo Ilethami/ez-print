@@ -9,7 +9,7 @@ import ClientSignup from "../Login/ClientSignup.jsx";
 import ezIcon from "../assets/ezicon.png";
 export default function Home() {
   return (
-    <BrowserRouter basename="/ezprint">
+    <BrowserRouter>
       <Routes>
         <Route
           path="/"
