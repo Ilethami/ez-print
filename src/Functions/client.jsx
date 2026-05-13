@@ -18,7 +18,7 @@ export async function signup() {
         pw_hash: document.getElementById("signup-password").value // matches backend
     };
 
-    const response = await fetch("api/user/new_account", {
+    const response = await fetch("/user/new_account", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -48,7 +48,7 @@ export async function login() {
         pw: document.getElementById("login-password").value
     };
 
-    const response = await fetch("api/user/login", {
+    const response = await fetch("/user/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -92,7 +92,7 @@ export async function loadUserOrders() {
 
     const filter = document.getElementById("order-filter").value;
 
-    let url = "api/user/orders";
+    let url = "/user/orders";
 
     if (filter) {
         url += `?state=${filter}`;
@@ -159,7 +159,7 @@ let currentOrderId = null;
 export async function openPayment(orderId, vendorId) {
     currentOrderId = orderId;
 
-    const response = await fetch(`api/order/${vendorId}/gcash`);
+    const response = await fetch(`/order/${vendorId}/gcash`);
 
     if (!response.ok) {
         console.error("Failed to load GCash QR");
@@ -188,7 +188,7 @@ export async function submitReceipt() {
     formData.append("file", file);
 
     const response = await fetch(
-        `api/order/${currentOrderId}/submit_reciept`,
+        `/order/${currentOrderId}/submit_reciept`,
         {
             method: "POST",
             body: formData

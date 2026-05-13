@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
-export async function get_vendors() { 
-    const vendors = await fetch("api/order/listvendors");
+export async function get_vendors() {
+    const vendors = await fetch("/order/listvendors");
     const vendors_res = await vendors.json();
 
     const container = document.getElementById("vendor-list");
@@ -23,12 +23,12 @@ export async function get_vendors() {
 
         container.appendChild(div);
 
-console.log(vendors_res);
+        console.log(vendors_res);
     });
 }
 
 export async function selectVendor(pub_id) {
-    const response = await fetch("api/order/choosevendor", {
+    const response = await fetch("/order/choosevendor", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -62,17 +62,17 @@ export async function uploadFile() {
     formData.append("file", file);
     formData.append("vendor_id", vendor);
 
-    const response = await fetch("api/order/attachfile", {
+    const response = await fetch("/order/attachfile", {
         method: "POST",
         body: formData
     });
 
     const res = await response.json();
-    
 
 
-    localStorage.setItem("uploaded_file", res); 
-    
+
+    localStorage.setItem("uploaded_file", res);
+
     console.log(res);
 
     alert("file uploaded")
@@ -89,13 +89,13 @@ export async function review_order() {
     const copies = parseInt(document.getElementById("copies").value);
     const print_size = document.getElementById("print-size").value;
 
-    
+
     const color = document.getElementById("color").value;
     const colorValue = color === "color";
 
-    const order_data = { copies, vendor ,color: colorValue };
+    const order_data = { copies, vendor, color: colorValue };
 
-    const totalRes = await fetch("api/order/total", {
+    const totalRes = await fetch("/order/total", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -112,7 +112,7 @@ export async function review_order() {
 
     const container = document.getElementById("review-order");
 
-        container.innerHTML = `
+    container.innerHTML = `
             <h3> Order Details </h3>
             <p> copies: ${copies} </p>
             <p> shop: ${vendor} </p>
@@ -122,7 +122,7 @@ export async function review_order() {
             <button id="confirm-order">Continue</button>
         `;
 
-        
+
     document.getElementById("confirm-order").addEventListener("click", () => {
         createOrder(vendor, copies, print_size, colorValue, totalData);
     });
@@ -130,21 +130,21 @@ export async function review_order() {
 
 export async function createOrder(vendor, copies, print_size, colorValue, totalData) {
     const token = localStorage.getItem("usr_token");
-    
+
     const file = localStorage.getItem("uploaded_file");
 
-    const payload = { 
-        copies, 
-        print_size, 
-        color: colorValue, 
-        file, 
-        total: totalData, 
+    const payload = {
+        copies,
+        print_size,
+        color: colorValue,
+        file,
+        total: totalData,
         vendor
     };
 
-    await fetch("api/order/createorder", {
+    await fetch("/order/createorder", {
         method: "POST",
-        headers: { 
+        headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + token
         },
