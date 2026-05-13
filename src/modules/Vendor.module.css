@@ -1,0 +1,172 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Background */
+.background {
+  background: #ebeaea;
+  position: fixed;
+  inset: 0;
+  z-index: -9999;
+}
+/* Centers the form */
+.signUp {
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  width: 90%;
+  max-width: 100%; /* keeps your desktop look */
+  margin: 80px auto;
+  padding: 40px;
+  border-radius: 20px;
+  background: transparent;
+  text-align: center;
+}
+
+/* Title */
+.signUp h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+/* Grid */
+.formGrid {
+  align-self: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 20px;
+  background-color: #9a9a9a;
+  padding: 35px 30px 50px;
+  border: 1px #ff5f5f solid;
+  border-radius: 1em;
+  width: 870px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0px 0px 0px 5px;
+}
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  text-align: left;
+}
+/* Full bwidth items */
+.mapContainer {
+  display: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+  margin: 20px;
+  height: 500px;
+}
+/* Inputs */
+.signUp input {
+  padding: 14px;
+  border-radius: 0.5em;
+  border: solid 1px rgb(115, 115, 115);
+  background: #e2e2e2;
+  font-size: 14px;
+}
+
+/* Placeholder */
+.signUp input::placeholder {
+  color: #9a9a9a;
+  opacity: 1;
+  transition: ease-in-out 0.2s;
+}
+
+.signUp input:focus::placeholder {
+  opacity: 0.5;
+}
+.signUp#usrLoc {
+  display: none;
+}
+/* Button */
+.formGrid .button {
+  width: 400px;
+  margin: 40px 10px;
+  padding: 15px;
+  border-radius: 40px;
+  border: none;
+  background: rgb(32, 28, 28);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  transition: 0.3s;
+  grid-column: 1 / -1; /* span full width */
+  justify-self: center;
+}
+
+.signUp .button:hover {
+  transform: scale(1.05);
+  background: rgb(41, 37, 37);
+}
+
+/* ========================= */
+/* 📱 TABLET (<= 768px) */
+/* ========================= */
+@media (max-width: 768px) {
+  .signUp {
+    padding: 30px 20px;
+    margin: 60px auto;
+  }
+
+  .signUp h1 {
+    font-size: 28px;
+  }
+
+  .formGrid {
+    gap: 14px;
+  }
+}
+/* ========================= */
+/* 📱 MOBILE (<= 480px) */
+/* ========================= */
+@media (max-width: 480px) {
+  .signUp {
+    width: 95%;
+    padding: 25px 15px;
+    margin: 40px auto;
+  }
+
+  .signUp h1 {
+    font-size: 24px;
+  }
+
+  .signUp p {
+    font-size: 14px;
+  }
+
+  /* stack inputs in 1 column */
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: span 1;
+  }
+
+  .signUp input {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .signUp button {
+    width: 100%;
+    padding: 14px;
+  }
+}
+
+[type="number"]::-webkit-outer-spin-button,
+[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
