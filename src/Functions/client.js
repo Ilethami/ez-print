@@ -39,7 +39,7 @@ export async function signup() {
 
     alert("Account created!");
 
-    window.location.href = <Link to="/client-login" />;
+    window.location.href = <Link to="/client-login" ></Link>;
 }
 
 export async function login() {
@@ -208,6 +208,6 @@ export async function submitReceipt() {
 
 export function logout() {
     localStorage.removeItem("usr_token");
-    window.location.href = <Link to="/" />;
+    window.location.href = <Link to="/" ></Link>;
 }
 
