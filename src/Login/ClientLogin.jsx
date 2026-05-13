@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import * as c from "../Functions/client";
+import * as c from "../Functions/client.jsx";
 import ClientDash from "../Vendor/PartnerDash.jsx";
 
 export default function ClientLogin() {

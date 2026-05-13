@@ -1,4 +1,4 @@
-import * as Ven from "../Functions/login_vendor";
+import * as Ven from "../Functions/login_vendor.jsx";
 import styles from "../modules/PartnerDash.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
