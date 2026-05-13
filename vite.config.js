@@ -5,4 +5,10 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: process.env.VITE_BASE_PATH || "/ez-print",
+
+  server: {
+    proxy: {
+      "/api": "http://localhost:3001",
+    },
+  },
 });
