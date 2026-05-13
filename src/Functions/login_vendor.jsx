@@ -19,7 +19,7 @@ export async function vendorLogin() {
         pw: document.getElementById("password").value
     };
 
-    const response = await fetch("/vendor/login", {
+    const response = await fetch("vendor/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -53,7 +53,7 @@ export async function loadVendorHome() {
         return;
     }
 
-    const response = await fetch("/vendor/home", {
+    const response = await fetch("vendor/home", {
         method: "get",
         headers: {
             "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export async function loadOrders() {
 
     if (!vendor_token) return;
 
-    const response = await fetch("/vendor/orders", {
+    const response = await fetch("vendor/orders", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -177,7 +177,7 @@ export function renderOrders(orders) {
 }
 
 export async function acceptOrder(pub_id) {
-    const response = await fetch("/vendor/accept", {
+    const response = await fetch("vendor/accept", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -198,7 +198,7 @@ export async function acceptOrder(pub_id) {
 }
 
 export async function rejectOrder(pub_id) {
-    const response = await fetch("/vendor/reject", {
+    const response = await fetch("vendor/reject", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -219,7 +219,7 @@ export async function rejectOrder(pub_id) {
 }
 
 export async function see_reciept(pub_id) {
-    const response = await fetch(`/order/${pub_id}/reciept`);
+    const response = await fetch(`order/${pub_id}/reciept`);
 
     if (!response.ok) {
         console.error("Failed to load GCash QR");
@@ -253,7 +253,7 @@ export async function loadHandlingOrders() {
 
     const filter = document.getElementById("order-filter").value;
 
-    let url = "/vendor/handling_orders";
+    let url = "vendor/handling_orders";
 
     if (filter) {
         url += `?state=${filter}`;
@@ -342,7 +342,7 @@ export async function renderHandlingOrders(orders) {
 }
 
 export async function set_printed(pub_id) {
-    await fetch("/vendor/set_printed", {
+    await fetch("vendor/set_printed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pub_id)
@@ -352,7 +352,7 @@ export async function set_printed(pub_id) {
 }
 
 export async function set_paid(pub_id) {
-    await fetch("/vendor/set_paid", {
+    await fetch("vendor/set_paid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pub_id)
@@ -362,7 +362,7 @@ export async function set_paid(pub_id) {
 }
 
 export async function set_claimed(pub_id) {
-    await fetch("/vendor/set_claimed", {
+    await fetch("vendor/set_claimed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pub_id)
@@ -372,7 +372,7 @@ export async function set_claimed(pub_id) {
 }
 
 export async function set_completed(pub_id) {
-    await fetch("/vendor/set_completed", {
+    await fetch("vendor/set_completed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pub_id)
@@ -398,7 +398,7 @@ export async function updateAvailability() {
 
     const value = selected.value;
 
-    const response = await fetch(`/vendor/change_status`, {
+    const response = await fetch(`vendor/change_status`, {
         method: "POST", // or PATCH (better, but POST is fine for now)
         headers: {
             "Content-Type": "application/json",
@@ -438,7 +438,7 @@ export async function uploadGcash() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/vendor/add_gcash", {
+    const response = await fetch("vendor/add_gcash", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + vendor_token
@@ -465,7 +465,7 @@ export async function uploadGcash() {
 
 export async function downloadFile(file_path, pub_id) {
 
-    const response = await fetch("/vendor/download_file", {
+    const response = await fetch("vendor/download_file", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

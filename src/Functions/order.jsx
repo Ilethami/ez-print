@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 export async function get_vendors() {
-    const vendors = await fetch("/order/listvendors");
+    const vendors = await fetch("order/listvendors");
     const vendors_res = await vendors.json();
 
     const container = document.getElementById("vendor-list");
@@ -28,7 +28,7 @@ export async function get_vendors() {
 }
 
 export async function selectVendor(pub_id) {
-    const response = await fetch("/order/choosevendor", {
+    const response = await fetch("order/choosevendor", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -62,7 +62,7 @@ export async function uploadFile() {
     formData.append("file", file);
     formData.append("vendor_id", vendor);
 
-    const response = await fetch("/order/attachfile", {
+    const response = await fetch("order/attachfile", {
         method: "POST",
         body: formData
     });
@@ -95,7 +95,7 @@ export async function review_order() {
 
     const order_data = { copies, vendor, color: colorValue };
 
-    const totalRes = await fetch("/order/total", {
+    const totalRes = await fetch("order/total", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -142,7 +142,7 @@ export async function createOrder(vendor, copies, print_size, colorValue, totalD
         vendor
     };
 
-    await fetch("/order/createorder", {
+    await fetch("order/createorder", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
