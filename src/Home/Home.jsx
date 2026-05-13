@@ -10,8 +10,8 @@ import ezIcon from "../assets/ezicon.png";
 export default function Home() {
   return (
     <BrowserRouter basename="/">
+      <NavBar />
       <Routes>
-
         <Route path="/vendor-map" element={<VendorMap />} />
         <Route path="/client-login" element={<ClientLogin />} />
         <Route path="/client-signup" element={<ClientSignup />} />
@@ -19,7 +19,7 @@ export default function Home() {
         <Route path="/vendor-signup" element={<CreateVendor />} />
         <Route path="/vendor-login" element={<VenDash />} />
       </Routes>
-      <NavBar />
+
     </BrowserRouter>
   );
 }
