@@ -14,7 +14,7 @@ export async function createVendor() {
 
     console.log("Payload:", payload); // debug
 
-    const response = await fetch("vendor/new", {
+    const response = await fetch("/api/vendor/new", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -22,15 +22,17 @@ export async function createVendor() {
         body: JSON.stringify(payload)
     });
 
-    if (response.ok) {
+    if (!response.ok) {
+        const err = await response.text();
+        console.error("Error:", err);
+        alert("Failed to create vendor");
+        return {error: true};
+    }
+
         alert("Vendor created!");
         const text = await response.text();
         const token = JSON.parse(text);
         localStorage.setItem("vendor_token", token);
-        window.location.href = "https://ez-print.shop/uploadGcash";
-    } else {
-        const err = await response.text();
-        console.error("Error:", err);
-        alert("Failed to create vendor");
-    }
+
+    return { success: true };
 }
