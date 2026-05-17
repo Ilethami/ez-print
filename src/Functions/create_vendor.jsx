@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export async function createVendor() {
     const payload = {
         name: document.getElementById("name").value,

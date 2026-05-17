@@ -37,7 +37,7 @@ export default function CreateVendor() {
   };
   async function handleSignup() {
     const email = document.getElementById("email").value;
-
+    
     if (!email.includes("@") || !email.includes(".com")) {
       alert("Invalid email");
       return;
@@ -51,7 +51,7 @@ export default function CreateVendor() {
         return;
       }
 
-      navigate("/partner-dash");
+      navigate("/uploadGcash");
     } catch (error) {
       console.error(error);
       alert("Server error");
@@ -86,7 +86,7 @@ export default function CreateVendor() {
         </div>
         <div className={styles.formGrid}>
           <div className={styles.field}>
-            <p className={styles.label}>Employee Name</p>
+            <p className={styles.label}>Full Name</p>
             <input id="name" placeholder="Name" />
           </div>
           <div className={styles.field}>
@@ -142,6 +142,7 @@ export default function CreateVendor() {
             type="button"
             className={styles.button}
             onClick={handleSignup}
+            
           >
             Apply Now
           </button>

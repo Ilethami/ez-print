@@ -7,6 +7,7 @@ import VenDash from "../Vendor/Vendor-Dashboard.jsx";
 import ClientLogin from "../Login/ClientLogin.jsx";
 import ClientSignup from "../Login/ClientSignup.jsx";
 import ezIcon from "../assets/ezicon.png";
+import UploadGcash from "../Vendor/UploadGcash.jsx"; 
 export default function Home() {
   return (
     <BrowserRouter basename="/">
@@ -18,8 +19,8 @@ export default function Home() {
         <Route path="/partner-dash" element={<ClientDash />} />
         <Route path="/vendor-signup" element={<CreateVendor />} />
         <Route path="/vendor-login" element={<VenDash />} />
+        <Route path="/uploadGcash" element={<UploadGcash />} /> 
       </Routes>
-
     </BrowserRouter>
   );
 }

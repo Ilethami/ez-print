@@ -23,7 +23,7 @@ export default function ClientDash() {
     const fetchVendors = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3001/order/listvendors",
+          "/api/order/listvendors",
         );
         const vendors_res = await res.json();
         console.log("RAW backend response:", vendors_res); // 👈 ADD HERE
