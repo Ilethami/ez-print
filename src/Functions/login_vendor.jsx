@@ -232,7 +232,7 @@ export async function see_reciept(pub_id) {
 
 let handlingVisible = false;
 
-export async function toggleHandlingOrders() {
+/* export async function toggleHandlingOrders() {
     const container = document.getElementById("handling-container");
 
     handlingVisible = !handlingVisible;
@@ -245,7 +245,7 @@ export async function toggleHandlingOrders() {
     container.style.display = "block";
 
     await loadHandlingOrders();
-}
+}*/
 
 export async function loadHandlingOrders() {
     const vendor_token = localStorage.getItem("vendor_token");
@@ -275,6 +275,8 @@ export async function loadHandlingOrders() {
 
     const orders = JSON.parse(text);
     renderHandlingOrders(orders);
+
+    console.log(orders);
 }
 
 export function applyFilter() {
@@ -303,11 +305,18 @@ export function handleOrderAction(action, pub_id) {
 
 export async function renderHandlingOrders(orders) {
     const container = document.getElementById("orders-list");
+
+    if (!container) {
+        console.error("orders-list not found");
+        return;
+    }
+
     container.innerHTML = "";
 
     if (!orders.length) {
         container.innerHTML = "<p> Empty </p>";
         return;
+
     }
 
     for (const order of orders) {
@@ -328,7 +337,7 @@ export async function renderHandlingOrders(orders) {
             <p>claimed on: ${formatTimestamp(order.claimed_at)}</p>
             <p>completed on: ${formatTimestamp(order.completed_at)}</p>
             
-            <select onchange="handleOrderAction(this.value, '${order.pub_id}')">
+            <select>
                 <option value="">${order.status}</option>
                 <option value="paid">Confirm Payment</option>
                 <option value="claimed">Claimed</option>
@@ -337,8 +346,16 @@ export async function renderHandlingOrders(orders) {
             </select>        
         `;
 
-        container.appendChild(div);
+            const select = div.querySelector("select");
+    
+            select.addEventListener("change", (e) => {
+                handleOrderAction(e.target.value, order.pub_id);
+            });
+
+            container.appendChild(div);
     }
+
+    console.log(orders);
 }
 
 export async function set_printed(pub_id) {
