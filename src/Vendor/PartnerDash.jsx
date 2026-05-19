@@ -6,6 +6,7 @@ import History from "./Popups/History";
 import Orders from "./Popups/Orders";
 
 import { useState, useEffect } from "react";
+
 export default function ClientDash() {
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
@@ -13,78 +14,99 @@ export default function ClientDash() {
   const [hasLocation, setHasLocation] = useState(false);
   const [showAvailability, setShowAvailability] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
+
+  // NEW: store status state
+  const [storeStatus, setStoreStatus] = useState("Loading...");
+
   const closeBtn = () => {
     setActivePanel(null);
   };
+
   const toggleAvailability = () => {
     setShowAvailability((prev) => !prev);
   };
+
   useEffect(() => {
     const fetchVendors = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3001/order/listvendors",
+          "http://localhost:3001/order/listvendors"
         );
+
         const vendors_res = await res.json();
-        console.log("RAW backend response:", vendors_res); // 👈 ADD HERE
+        console.log("RAW backend response:", vendors_res);
+
         setVendors(vendors_res);
+
+        // assume logged-in vendor is first item (adjust if needed)
+        if (vendors_res?.length > 0) {
+          setStoreStatus(vendors_res[0].availability || "Unknown");
+        }
       } catch (err) {
         console.error("Failed to fetch vendors:", err);
       }
     };
+
     fetchVendors();
   }, []);
+
   return (
     <>
       {/* Partner Navigation */}
-
       <div className={styles.header}>
         <h2>Partner Dashboard</h2>
+
         <div className={styles.status}>
-          <h3>Store Status</h3>
-          <button onClick={toggleAvailability}>Change Status</button>
+          <h3>Store Status: {storeStatus}</h3>
+
+          <button onClick={toggleAvailability}>
+            Change Status
+          </button>
         </div>
       </div>
+
+      {/* Availability Section */}
       <div id="availability-section" className={styles.order}>
         {showAvailability && (
           <div className={styles.availability}>
             <label>
-              <input
-                type="radio"
-                name="availability"
-                value="Available"
-              />
+              <input type="radio" name="availability" value="Available" />
               Available
             </label>
+
             <label>
-              <input type="radio" name="availability" value="Busy" />{" "}
+              <input type="radio" name="availability" value="Busy" />
               Busy
             </label>
+
             <label>
-              <input type="radio" name="availability" value="SBusy" />
+              <input type="radio" name="availability" value="Slightly Busy" />
               Slightly Busy
             </label>
+
             <label>
-              <input
-                type="radio"
-                name="availability"
-                value="Closed"
-              />
+              <input type="radio" name="availability" value="Closed" />
               Closed
             </label>
+
             <br />
             <br />
+
             <button
               onClick={async () => {
                 const selected = document.querySelector(
-                  'input[name="availability"]:checked',
+                  'input[name="availability"]:checked'
                 );
 
                 if (!selected) {
                   alert("Please select a status first");
                   return;
                 }
+
                 await ven.updateAvailability();
+
+                // update UI instantly
+                setStoreStatus(selected.value);
 
                 setShowAvailability(false);
               }}
@@ -95,14 +117,10 @@ export default function ClientDash() {
         )}
       </div>
 
-      {/* Partner sidebar */}
+      {/* Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.buttons}>
-          <button
-            onClick={() => {
-              setActivePanel("store");
-            }}
-          >
+          <button onClick={() => setActivePanel("store")}>
             See Store Details
           </button>
 
@@ -123,19 +141,19 @@ export default function ClientDash() {
           {activePanel === "orders" && (
             <Orders setActivePanel={setActivePanel} />
           )}
+
           {activePanel === "history" && (
             <History setActivePanel={setActivePanel} />
           )}
         </div>
       </div>
 
-      {/* Vendor Details Popup*/}
+      {/* Vendor Details Popup */}
       {selectedVendor && (
         <div className={styles.vendorDetails}>
           <h3>{selectedVendor?.brand}</h3>
 
           <p>Black & White: ₱{selectedVendor?.bw_rate ?? "N/A"}</p>
-
           <p>Colored: ₱{selectedVendor?.clrd_rate ?? "N/A"}</p>
 
           <button
@@ -148,7 +166,7 @@ export default function ClientDash() {
         </div>
       )}
 
-      {/* Client Map behind sidebar */}
+      {/* Map */}
       <div className={styles.mapContainer}>
         <VendorMap
           setSelectedVendor={setSelectedVendor}

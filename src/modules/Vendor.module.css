@@ -12,17 +12,15 @@
   inset: 0;
   z-index: -9999;
 }
-/* Centers the form */
+
+/* Form container */
 .signUp {
   display: flex;
-  align-content: center;
   flex-direction: column;
   width: 90%;
-  max-width: 100%; /* keeps your desktop look */
   margin: 80px auto;
   padding: 40px;
   border-radius: 20px;
-  background: transparent;
   text-align: center;
 }
 
@@ -32,141 +30,136 @@
   margin-bottom: 10px;
 }
 
-/* Grid */
+/* GRID */
 .formGrid {
   align-self: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
+
   margin-top: 20px;
   background-color: #9a9a9a;
   padding: 35px 30px 50px;
+
   border: 1px #ff5f5f solid;
   border-radius: 1em;
+
   width: 870px;
 }
+
+/* Fields */
 .field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 0px 0px 0px 5px;
 }
+
 .label {
   font-size: 13px;
   font-weight: 600;
   color: #222;
   text-align: left;
 }
-/* Full bwidth items */
-.mapContainer {
-  display: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid #ddd;
-  margin: 20px;
-  height: 500px;
-}
+
 /* Inputs */
 .signUp input {
   padding: 14px;
   border-radius: 0.5em;
-  border: solid 1px rgb(115, 115, 115);
+  border: 1px solid rgb(115, 115, 115);
   background: #e2e2e2;
   font-size: 14px;
 }
 
-/* Placeholder */
-.signUp input::placeholder {
-  color: #9a9a9a;
-  opacity: 1;
-  transition: ease-in-out 0.2s;
+/* ========================= */
+/* BUTTON ROW (3 COLUMN LAYOUT) */
+/* ========================= */
+
+.buttonRow {
+  grid-column: 1 / -1;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  margin-top: 40px;
 }
 
-.signUp input:focus::placeholder {
-  opacity: 0.5;
+/* 📍 Location button (left, small) */
+.locationButton {
+  justify-self: start;
+
+  width: 160px;
+  padding: 12px 14px;
+
+  border-radius: 40px;
+  border: 1px solid #999;
+
+  background: #e6e6e6;
+  color: #222;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
 }
-.signUp#usrLoc {
-  display: none;
+
+.locationButton:hover {
+  background: #dcdcdc;
+  transform: translateY(-1px);
 }
-/* Button */
+
+.locationButton:active {
+  transform: scale(0.98);
+}
+
+/* ✅ Apply button (centered) */
 .formGrid .button {
-  width: 400px;
-  margin: 40px 10px;
+  justify-self: center;
+
+  width: 260px;
   padding: 15px;
+
   border-radius: 40px;
   border: none;
+
   background: rgb(32, 28, 28);
   color: white;
+
   font-size: 16px;
   cursor: pointer;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
   transition: 0.3s;
-  grid-column: 1 / -1; /* span full width */
-  justify-self: center;
 }
 
-.signUp .button:hover {
+.formGrid .button:hover {
   transform: scale(1.05);
   background: rgb(41, 37, 37);
 }
 
-/* ========================= */
-/* 📱 TABLET (<= 768px) */
-/* ========================= */
-@media (max-width: 768px) {
-  .signUp {
-    padding: 30px 20px;
-    margin: 60px auto;
-  }
-
-  .signUp h1 {
-    font-size: 28px;
-  }
-
-  .formGrid {
-    gap: 14px;
-  }
+/* Map */
+.mapContainer {
+  display: none;
+  height: 500px;
 }
+
 /* ========================= */
-/* 📱 MOBILE (<= 480px) */
+/* MOBILE */
 /* ========================= */
 @media (max-width: 480px) {
-  .signUp {
-    width: 95%;
-    padding: 25px 15px;
-    margin: 40px auto;
-  }
-
-  .signUp h1 {
-    font-size: 24px;
-  }
-
-  .signUp p {
-    font-size: 14px;
-  }
-
-  /* stack inputs in 1 column */
   .formGrid {
     grid-template-columns: 1fr;
+    width: 95%;
   }
 
-  .full {
-    grid-column: span 1;
+  .buttonRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .signUp input {
-    font-size: 13px;
-    padding: 12px;
-  }
-
-  .signUp button {
+  .locationButton,
+  .formGrid .button {
     width: 100%;
-    padding: 14px;
+    justify-self: center;
   }
-}
-
-[type="number"]::-webkit-outer-spin-button,
-[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }

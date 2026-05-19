@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export async function createVendor() {
     const payload = {
         name: document.getElementById("name").value,
@@ -13,13 +11,12 @@ export async function createVendor() {
     };
 
     console.log("Payload:", payload); // debug
-
-    const response = await fetch("vendor/new", {
+    const response = await fetch("api/vendor/new", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     });
 
     if (response.ok) {

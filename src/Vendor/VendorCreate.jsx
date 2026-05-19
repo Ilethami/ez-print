@@ -1,74 +1,105 @@
-import { createVendor } from "../Functions/create_vendor";
-import styles from "../modules/Vendor.module.css";
-import { useEffect } from "react";
-import { useState } from "react";
-import VendorMap from "./Vendor-Map";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { createVendor } from "../Functions/create_vendor.jsx";
+import VendorMap from "./Vendor-Map";
+
+import styles from "../modules/Vendor.module.css";
+
 export default function CreateVendor() {
-  const [selectedVendor, setSelectedVendor] = useState(null);
+  const navigate = useNavigate();
+
   const [center, setCenter] = useState([0, 0]);
   const [hasLocation, setHasLocation] = useState(false);
-  const [latInput, setLatInput] = useState("");
-  const [lngInput, setLngInput] = useState("");
-  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    brand: "",
+    pw: "",
+    email: "",
+    bw_rate: "",
+    clrd_rate: "",
+    lat: "",
+    long: "",
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
+      alert("Geolocation not supported");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = Number(position.coords.latitude);
-        const lng = Number(position.coords.longitude);
+      ({ coords }) => {
+        const lat = coords.latitude;
+        const lng = coords.longitude;
+
         setCenter([lat, lng]);
+        setHasLocation(true);
+
+        setFormData((prev) => ({
+          ...prev,
+          lat: lat.toString(),
+          long: lng.toString(),
+        }));
+
+        alert("Location acquired successfully!");
       },
-      () => {
-        // location access denied or unavailable
+      (error) => {
+        console.log(error);
+        alert("Unable to get location");
       },
+      {
+        enableHighAccuracy: true,
+      }
     );
   };
-  const applyCoordinates = () => {
-    const lat = parseFloat(latInput);
-    const lng = parseFloat(lngInput);
+
+  useEffect(() => {
+    const lat = parseFloat(formData.lat);
+    const lng = parseFloat(formData.long);
 
     if (!isNaN(lat) && !isNaN(lng)) {
-      setCenter([Number(lat), Number(lng)]);
+      setCenter([lat, lng]);
     }
-  };
-  async function handleSignup() {
-    const email = document.getElementById("email").value;
+  }, [formData.lat, formData.long]);
 
-    if (!email.includes("@") || !email.includes(".com")) {
+  const handleSignup = async () => {
+    if (!formData.email.includes("@") || !formData.email.includes(".com")) {
       alert("Invalid email");
       return;
     }
 
-    try {
-      const result = await createVendor();
-      console.log("createVendor result:", result);
-      // 🔥 IMPORTANT: check result
-      if (!result || result.error) {
-        return;
+    Object.entries(formData).forEach(([key, value]) => {
+      let input = document.getElementById(key);
+
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.id = key;
+        document.body.appendChild(input);
       }
 
+      input.value = value;
+    });
+
+    try {
+      await createVendor();
       navigate("/partner-dash");
     } catch (error) {
-      console.error(error);
       alert("Server error");
     }
-  }
+  };
 
-  useEffect(() => {
-    if (
-      center &&
-      center.length === 2 &&
-      !isNaN(center[0]) &&
-      !isNaN(center[1])
-    ) {
-      setLatInput(center[0]);
-      setLngInput(center[1]);
-    }
-  }, [center]);
   return (
     <>
       <div className={styles.background}></div>
@@ -78,75 +109,50 @@ export default function CreateVendor() {
 
         <div className={styles.mapContainer}>
           <VendorMap
-            setSelectedVendor={setSelectedVendor}
             center={center}
             setCenter={setCenter}
             setHasLocation={setHasLocation}
           />
         </div>
+
         <div className={styles.formGrid}>
-          <div className={styles.field}>
-            <p className={styles.label}>Employee Name</p>
-            <input id="name" placeholder="Name" />
+          <InputField label="Employee Name" id="name" value={formData.name} onChange={handleChange} />
+          <InputField label="Company Name/Brand" id="brand" value={formData.brand} onChange={handleChange} />
+          <InputField label="Password" id="pw" type="password" value={formData.pw} onChange={handleChange} />
+          <InputField label="Email" id="email" value={formData.email} onChange={handleChange} />
+          <InputField label="B/W Rate" id="bw_rate" type="number" value={formData.bw_rate} onChange={handleChange} />
+          <InputField label="Color Rate" id="clrd_rate" type="number" value={formData.clrd_rate} onChange={handleChange} />
+          <InputField label="Latitude" id="lat" type="number" value={formData.lat} onChange={handleChange} />
+          <InputField label="Longitude" id="long" type="number" value={formData.long} onChange={handleChange} />
+
+          <div className={styles.buttonRow}>
+            <button
+              type="button"
+              className={styles.locationButton}
+              onClick={getCurrentLocation}
+            >
+              Get Location
+            </button>
+
+            <button
+              type="button"
+              className={styles.button}
+              onClick={handleSignup}
+            >
+              Apply Now
+            </button>
           </div>
-          <div className={styles.field}>
-            <p className={styles.label}>Company Name/Brand</p>
-            <input
-              id="brand"
-              className={styles.full}
-              placeholder="Brand"
-            />
-          </div>
-          <div className={styles.field}>
-            <p className={styles.label}>Password</p>
-            <input id="pw" placeholder="Password" type="password" />
-          </div>
-          <div className={styles.field}>
-            <p className={styles.label}>Company Email</p>
-            <input id="email" placeholder="Email" />
-          </div>
-          <div className={styles.field}>
-            <p className={styles.label}>Black & White Rate</p>
-            <input
-              id="bw_rate"
-              placeholder="B/W Rate"
-              type="number"
-            />
-          </div>
-          <div className={styles.field}>
-            <p className={styles.label}>Colored Rate</p>
-            <input
-              id="clrd_rate"
-              placeholder="Color Rate"
-              type="number"
-            />
-          </div>
-          {/* 👇 auto-filled */}
-          <input
-            id="lat"
-            type="number"
-            placeholder="Latitude"
-            value={latInput}
-            onChange={(e) => setLatInput(e.target.value)}
-            onBlur={applyCoordinates}
-          />
-          <input
-            id="long"
-            type="number"
-            placeholder="Longitude"
-            value={lngInput}
-            onChange={(e) => setLngInput(e.target.value)}
-            onBlur={applyCoordinates}
-          />
-          <button
-            type="button"
-            className={styles.button}
-            onClick={handleSignup}
-          >
-            Apply Now
-          </button>
         </div>
       </form>
     </>
+  );
+}
+
+function InputField({ label, id, type = "text", value, onChange }) {
+  return (
+    <div className={styles.field}>
+      <p className={styles.label}>{label}</p>
+      <input id={id} type={type} value={value} onChange={onChange} />
+    </div>
   );
 }

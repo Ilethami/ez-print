@@ -6,9 +6,18 @@ export default function VenDash() {
   const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
   async function handleLogin() {
-    await Ven.vendorLogin(); // your existing login logic
+    const oldToken = localStorage.getItem("vendor_token");
 
-    // if login succeeds (you don't return status yet, so we assume success)
+    await Ven.vendorLogin();
+
+    const newToken = localStorage.getItem("vendor_token");
+
+    // if login failed, token won't change / won't exist
+    if (!newToken || newToken === oldToken) {
+      alert("Invalid credentials");
+      return;
+    }
+
     setLoggedIn(true);
     navigate("/partner-dash");
   }

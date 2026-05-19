@@ -2,92 +2,92 @@ import { Link } from "react-router-dom";
 const vendor_token = localStorage.getItem("vendor_token");
 
 export function formatTimestamp(timestamp) {
-    if (!timestamp) {
-        return "Pending";
-    }
+  if (!timestamp) {
+    return "Pending";
+  }
 
-    return new Date(timestamp).toLocaleString("en-PH", {
-        timeZone: "Asia/Manila",
-        dateStyle: "medium",
-        timeStyle: "short"
-    });
+  return new Date(timestamp).toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 }
 
 export async function vendorLogin() {
-    const payload = {
-        name: document.getElementById("username").value,
-        pw: document.getElementById("password").value
-    };
+  const payload = {
+    name: document.getElementById("username").value,
+    pw: document.getElementById("password").value,
+  };
 
-    const response = await fetch("vendor/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
+  const response = await fetch("/api/vendor/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Login failed:", text);
-        alert("Invalid credentials");
-        return;
-    }
+  if (!response.ok) {
+    console.error("Login failed:", text);
+    alert("Invalid credentials");
+    return;
+  }
 
-    const token = JSON.parse(text);
+  const token = JSON.parse(text);
 
-    console.log("token:", token);
+  console.log("token:", token);
 
-    localStorage.setItem("vendor_token", token);
+  localStorage.setItem("vendor_token", token);
 
-    alert("Login successful!");
-    loadVendorHome();
+  alert("Login successful!");
+  loadVendorHome();
 }
 
 export async function loadVendorHome() {
-    const vendor_token = localStorage.getItem("vendor_token");
+  const vendor_token = localStorage.getItem("vendor_token");
 
-    if (!vendor_token) {
-        alert("No vendor logged in");
-        return;
-    }
+  if (!vendor_token) {
+    alert("No vendor logged in");
+    return;
+  }
 
-    const response = await fetch("vendor/home", {
-        method: "get",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
+  const response = await fetch("/api/vendor/home", {
+    method: "get",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + vendor_token,
+    },
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Failed to load home:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Failed to load home:", text);
+    return;
+  }
 
-    const data = JSON.parse(text);
+  const data = JSON.parse(text);
 
-    console.log("Vendor home:", data);
+  console.log("Vendor home:", data);
 
-    renderVendorHome(data);
+  renderVendorHome(data);
 }
 
 export function renderVendorHome(data) {
-    const container = document.getElementById("vendor-home");
+  const container = document.getElementById("vendor-home");
 
-    container.innerHTML = "";
+  container.innerHTML = "";
 
-    if (!data.length) {
-        container.innerHTML = "<p>No data found</p>";
-        return;
-    }
+  if (!data.length) {
+    container.innerHTML = "<p>No data found</p>";
+    return;
+  }
 
-    const vendor = data[0];
+  const vendor = data[0];
 
-    container.innerHTML = `
+  container.innerHTML = `
         <h3>Vendor Dashboard</h3>
         <p>Vacancy: ${vendor.vacancy}</p>
         <p>Latitude: ${vendor.lat}</p>
@@ -98,59 +98,59 @@ export function renderVendorHome(data) {
 let ordersVisible = false;
 
 export async function toggleOrders() {
-    const container = document.getElementById("orders-container");
+  const container = document.getElementById("orders-container");
 
-    ordersVisible = !ordersVisible;
+  ordersVisible = !ordersVisible;
 
-    if (!ordersVisible) {
-        container.style.display = "none";
-        return;
-    }
+  if (!ordersVisible) {
+    container.style.display = "none";
+    return;
+  }
 
-    container.style.display = "block";
+  container.style.display = "block";
 
-    await loadOrders();
+  await loadOrders();
 }
 
 export async function loadOrders() {
-    const vendor_token = localStorage.getItem("vendor_token");
+  const vendor_token = localStorage.getItem("vendor_token");
 
-    if (!vendor_token) return;
+  if (!vendor_token) return;
 
-    const response = await fetch("vendor/orders", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
+  const response = await fetch("/api/vendor/orders", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + vendor_token,
+    },
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Failed:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Failed:", text);
+    return;
+  }
 
-    const orders = JSON.parse(text);
+  const orders = JSON.parse(text);
 
-    renderOrders(orders);
+  renderOrders(orders);
 }
 
 export function renderOrders(orders) {
-    const container = document.getElementById("orders-container");
+  const container = document.getElementById("orders-container");
 
-    container.innerHTML = "";
+  container.innerHTML = "";
 
-    if (!orders.length) {
-        container.innerHTML = "<p>No pending orders</p>";
-        return;
-    }
+  if (!orders.length) {
+    container.innerHTML = "<p>No pending orders</p>";
+    return;
+  }
 
-    orders.forEach(order => {
-        const div = document.createElement("div");
+  orders.forEach((order) => {
+    const div = document.createElement("div");
 
-        div.innerHTML = `
+    div.innerHTML = `
             <h3>Order: ${order.pub_id}</h3>
             <p>User: ${order.name}</p>
             <p>Copies: ${order.copies}</p>
@@ -172,67 +172,67 @@ export function renderOrders(orders) {
             </button>
         `;
 
-        container.appendChild(div);
-    });
+    container.appendChild(div);
+  });
 }
 
 export async function acceptOrder(pub_id) {
-    const response = await fetch("vendor/accept", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(pub_id)
-    });
+  const response = await fetch("/api/vendor/accept", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(pub_id),
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Accept failed:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Accept failed:", text);
+    return;
+  }
 
-    console.log("Accepted:", text);
+  console.log("Accepted:", text);
 
-    loadOrders();
+  loadOrders();
 }
 
 export async function rejectOrder(pub_id) {
-    const response = await fetch("vendor/reject", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(pub_id)
-    });
+  const response = await fetch("/api/vendor/reject", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(pub_id),
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Reject failed:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Reject failed:", text);
+    return;
+  }
 
-    console.log("Rejected:", text);
+  console.log("Rejected:", text);
 
-    loadOrders();
+  loadOrders();
 }
 
 export async function see_reciept(pub_id) {
-    const response = await fetch(`order/${pub_id}/reciept`);
+  const response = await fetch(`/api/order/${pub_id}/reciept`);
 
-    if (!response.ok) {
-        console.error("Failed to load GCash QR");
-        return;
-    }
+  if (!response.ok) {
+    console.error("Failed to load GCash QR");
+    return;
+  }
 
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
 }
 
 let handlingVisible = false;
 
-export async function toggleHandlingOrders() {
+/* export async function toggleHandlingOrders() {
     const container = document.getElementById("handling-container");
 
     handlingVisible = !handlingVisible;
@@ -245,77 +245,84 @@ export async function toggleHandlingOrders() {
     container.style.display = "block";
 
     await loadHandlingOrders();
-}
+}*/
 
 export async function loadHandlingOrders() {
-    const vendor_token = localStorage.getItem("vendor_token");
-    if (!vendor_token) return;
+  const vendor_token = localStorage.getItem("vendor_token");
+  if (!vendor_token) return;
 
-    const filter = document.getElementById("order-filter").value;
+  const filter = document.getElementById("order-filter").value;
 
-    let url = "vendor/handling_orders";
+  let url = "/api/vendor/handling_orders";
 
-    if (filter) {
-        url += `?state=${filter}`;
-    }
+  if (filter) {
+    url += `?state=${filter}`;
+  }
 
-    const response = await fetch(url, {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + vendor_token,
+    },
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Failed:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Failed:", text);
+    return;
+  }
 
-    const orders = JSON.parse(text);
-    renderHandlingOrders(orders);
+  const orders = JSON.parse(text);
+  renderHandlingOrders(orders);
+
+  console.log(orders);
 }
 
 export function applyFilter() {
-    loadHandlingOrders();
+  loadHandlingOrders();
 }
 
 export function handleOrderAction(action, pub_id) {
-    if (!action) return;
+  if (!action) return;
 
-    switch (action) {
-        case "paid":
-            set_paid(pub_id);
-            break;
-        case "claimed":
-            set_claimed(pub_id);
-            break;
-        case "printed":
-            set_printed(pub_id);
-            break;
-        case "completed":
-            set_completed(pub_id);
-            break;
-    }
+  switch (action) {
+    case "paid":
+      set_paid(pub_id);
+      break;
+    case "claimed":
+      set_claimed(pub_id);
+      break;
+    case "printed":
+      set_printed(pub_id);
+      break;
+    case "completed":
+      set_completed(pub_id);
+      break;
+  }
 }
 
-
 export async function renderHandlingOrders(orders) {
-    const container = document.getElementById("orders-list");
-    container.innerHTML = "";
+  const container = document.getElementById("orders-list");
 
-    if (!orders.length) {
-        container.innerHTML = "<p> Empty </p>";
-        return;
-    }
+  if (!container) {
+    console.error("orders-list not found");
+    return;
+  }
 
-    for (const order of orders) {
-        const div = document.createElement("div");
+  container.innerHTML = "";
 
-        const imgUrl = await see_reciept(order.pub_id);
+  if (!orders.length) {
+    container.innerHTML = "<p> Empty </p>";
+    return;
+  }
 
-        div.innerHTML = `
+  for (const order of orders) {
+    const div = document.createElement("div");
+
+    const imgUrl = await see_reciept(order.pub_id);
+
+    div.innerHTML = `
             <h3>Order ${order.pub_id}</h3>
             <p>User: ${order.name}</p>
             <p>Copies: ${order.copies}</p>
@@ -328,7 +335,7 @@ export async function renderHandlingOrders(orders) {
             <p>claimed on: ${formatTimestamp(order.claimed_at)}</p>
             <p>completed on: ${formatTimestamp(order.completed_at)}</p>
             
-            <select onchange="handleOrderAction(this.value, '${order.pub_id}')">
+            <select>
                 <option value="">${order.status}</option>
                 <option value="paid">Confirm Payment</option>
                 <option value="claimed">Claimed</option>
@@ -337,183 +344,189 @@ export async function renderHandlingOrders(orders) {
             </select>        
         `;
 
-        container.appendChild(div);
-    }
+    const select = div.querySelector("select");
+
+    select.addEventListener("change", (e) => {
+      handleOrderAction(e.target.value, order.pub_id);
+    });
+
+    container.appendChild(div);
+  }
+
+  console.log(orders);
 }
 
 export async function set_printed(pub_id) {
-    await fetch("vendor/set_printed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    })
+  await fetch("/api/vendor/set_printed", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(pub_id),
+  });
 
-    loadHandlingOrders()
+  loadHandlingOrders();
 }
 
 export async function set_paid(pub_id) {
-    await fetch("vendor/set_paid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
+  await fetch("/api/vendor/set_paid", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(pub_id),
+  });
 
-    loadHandlingOrders()
+  loadHandlingOrders();
 }
 
 export async function set_claimed(pub_id) {
-    await fetch("vendor/set_claimed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
+  await fetch("/api/vendor/set_claimed", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(pub_id),
+  });
 
-    loadHandlingOrders()
+  loadHandlingOrders();
 }
 
 export async function set_completed(pub_id) {
-    await fetch("vendor/set_completed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
+  await fetch("/api/vendor/set_completed", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(pub_id),
+  });
 
-    loadHandlingOrders()
+  loadHandlingOrders();
 }
 
 export async function updateAvailability() {
-    const vendor_token = localStorage.getItem("vendor_token");
+  const vendor_token = localStorage.getItem("vendor_token");
 
-    if (!vendor_token) {
-        alert("Not logged in");
-        return;
-    }
+  if (!vendor_token) {
+    alert("Not logged in");
+    return;
+  }
 
-    const selected = document.querySelector('input[name="availability"]:checked');
+  const selected = document.querySelector(
+    'input[name="availability"]:checked',
+  );
 
-    if (!selected) {
-        alert("Select a status");
-        return;
-    }
+  if (!selected) {
+    alert("Select a status");
+    return;
+  }
 
-    const value = selected.value;
+  const value = selected.value;
 
-    const response = await fetch(`vendor/change_status`, {
-        method: "POST", // or PATCH (better, but POST is fine for now)
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        },
-        body: JSON.stringify(value) // sending raw string
-    });
+  const response = await fetch(`/api/vendor/change_status`, {
+    method: "POST", // or PATCH (better, but POST is fine for now)
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + vendor_token,
+    },
+    body: JSON.stringify(value), // sending raw string
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Failed:", text);
-        alert("Failed to update");
-        return;
-    }
+  if (!response.ok) {
+    console.error("Failed:", text);
+    alert("Failed to update");
+    return;
+  }
 
-    console.log("Updated:", value);
-    alert("Availability updated!");
+  console.log("Updated:", value);
+  alert("Availability updated!");
 }
 
 export async function uploadGcash() {
-    const vendor_token = localStorage.getItem("vendor_token");
+  const vendor_token = localStorage.getItem("vendor_token");
 
-    if (!vendor_token) {
-        alert("Not logged in");
-        return;
-    }
+  if (!vendor_token) {
+    alert("Not logged in");
+    return;
+  }
 
-    const fileInput = document.getElementById("gcash-file");
-    const file = fileInput.files[0];
+  const fileInput = document.getElementById("gcash-file");
+  const file = fileInput.files[0];
 
-    if (!file) {
-        alert("Select a file");
-        return;
-    }
+  if (!file) {
+    alert("Select a file");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("file", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-    const response = await fetch("vendor/add_gcash", {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + vendor_token
-        },
-        body: formData
-    }
-    );
+  const response = await fetch("/api/vendor/add_gcash", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + vendor_token,
+    },
+    body: formData,
+  });
 
-    const text = await response.text();
+  const text = await response.text();
 
-    if (!response.ok) {
-        console.error("Upload failed:", text);
-        return;
-    }
+  if (!response.ok) {
+    console.error("Upload failed:", text);
+    return { error: true };
+  }
 
-    const path = JSON.parse(text);
+  const path = JSON.parse(text);
 
-    console.log("Uploaded:", path);
+  console.log("Uploaded:", path);
 
-    alert("GCash QR uploaded!");
+  alert("GCash QR uploaded!");
 
-    window.location.href = <Link to="/vendor-login" />
+  return { success: true };
 }
 
 export async function downloadFile(file_path, pub_id) {
+  const response = await fetch("/api/vendor/download_file", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "bearer " + vendor_token,
+    },
+    body: JSON.stringify({
+      file_path,
+      pub_id,
+    }),
+  });
 
-    const response = await fetch("vendor/download_file", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": "bearer " + vendor_token
-        },
-        body: JSON.stringify({
-            file_path,
-            pub_id
-        })
-    });
+  if (!response.ok) {
+    console.error("Download failed");
+    return;
+  }
 
-    if (!response.ok) {
-        console.error("Download failed");
-        return;
-    }
+  const blob = await response.blob();
 
-    const blob = await response.blob();
+  // create download link
+  const url = window.URL.createObjectURL(blob);
 
-    // create download link
-    const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = file_path; // match backend
+  document.body.appendChild(a);
+  a.click();
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = file_path; // match backend
-    document.body.appendChild(a);
-    a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 
-    a.remove();
-    window.URL.revokeObjectURL(url);
-
-    console.log(file_path)
+  console.log(file_path);
 }
 
 export async function logout_vendor() {
-    const res = await fetch("http://localhost:3001/vendor/logout", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
+  const res = await fetch("/api/vendor/logout", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + vendor_token,
+    },
+  });
 
-    if (!res.ok) {
-        cosole.log("try again");
-        return;
-    }
+  if (!res.ok) {
+    cosole.log("try again");
+    return;
+  }
 
-    localStorage.removeItem("vendor_token");
-    window.location.href = <Link to="/" />;
-
+  localStorage.removeItem("vendor_token");
+  window.location.href = <Link to="/" />;
 }
-
