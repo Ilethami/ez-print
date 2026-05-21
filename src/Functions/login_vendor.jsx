@@ -19,7 +19,7 @@ export async function vendorLogin() {
     pw: document.getElementById("password").value,
   };
 
-  const response = await fetch("/api/vendor/login", {
+  const response = await fetch("vendor/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export async function loadVendorHome() {
     return;
   }
 
-  const response = await fetch("/api/vendor/home", {
+  const response = await fetch("vendor/home", {
     method: "get",
     headers: {
       "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export async function loadOrders() {
 
   if (!vendor_token) return;
 
-  const response = await fetch("/api/vendor/orders", {
+  const response = await fetch("vendor/orders", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -177,7 +177,7 @@ export function renderOrders(orders) {
 }
 
 export async function acceptOrder(pub_id) {
-  const response = await fetch("/api/vendor/accept", {
+  const response = await fetch("vendor/accept", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -198,7 +198,7 @@ export async function acceptOrder(pub_id) {
 }
 
 export async function rejectOrder(pub_id) {
-  const response = await fetch("/api/vendor/reject", {
+  const response = await fetch("vendor/reject", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -219,7 +219,7 @@ export async function rejectOrder(pub_id) {
 }
 
 export async function see_reciept(pub_id) {
-  const response = await fetch(`/api/order/${pub_id}/reciept`);
+  const response = await fetch(`order/${pub_id}/reciept`);
 
   if (!response.ok) {
     console.error("Failed to load GCash QR");
@@ -232,20 +232,20 @@ export async function see_reciept(pub_id) {
 
 let handlingVisible = false;
 
-/* export async function toggleHandlingOrders() {
-    const container = document.getElementById("handling-container");
+export async function toggleHandlingOrders() {
+  const container = document.getElementById("handling-container");
 
-    handlingVisible = !handlingVisible;
+  handlingVisible = !handlingVisible;
 
-    if (!handlingVisible) {
-        container.style.display = "none";
-        return;
-    }
+  if (!handlingVisible) {
+    container.style.display = "none";
+    return;
+  }
 
-    container.style.display = "block";
+  container.style.display = "block";
 
-    await loadHandlingOrders();
-}*/
+  await loadHandlingOrders();
+}
 
 export async function loadHandlingOrders() {
   const vendor_token = localStorage.getItem("vendor_token");
@@ -253,7 +253,7 @@ export async function loadHandlingOrders() {
 
   const filter = document.getElementById("order-filter").value;
 
-  let url = "/api/vendor/handling_orders";
+  let url = "vendor/handling_orders";
 
   if (filter) {
     url += `?state=${filter}`;
@@ -275,8 +275,6 @@ export async function loadHandlingOrders() {
 
   const orders = JSON.parse(text);
   renderHandlingOrders(orders);
-
-  console.log(orders);
 }
 
 export function applyFilter() {
@@ -304,12 +302,6 @@ export function handleOrderAction(action, pub_id) {
 
 export async function renderHandlingOrders(orders) {
   const container = document.getElementById("orders-list");
-
-  if (!container) {
-    console.error("orders-list not found");
-    return;
-  }
-
   container.innerHTML = "";
 
   if (!orders.length) {
@@ -335,7 +327,7 @@ export async function renderHandlingOrders(orders) {
             <p>claimed on: ${formatTimestamp(order.claimed_at)}</p>
             <p>completed on: ${formatTimestamp(order.completed_at)}</p>
             
-            <select>
+            <select onchange="handleOrderAction(this.value, '${order.pub_id}')">
                 <option value="">${order.status}</option>
                 <option value="paid">Confirm Payment</option>
                 <option value="claimed">Claimed</option>
@@ -344,20 +336,12 @@ export async function renderHandlingOrders(orders) {
             </select>        
         `;
 
-    const select = div.querySelector("select");
-
-    select.addEventListener("change", (e) => {
-      handleOrderAction(e.target.value, order.pub_id);
-    });
-
     container.appendChild(div);
   }
-
-  console.log(orders);
 }
 
 export async function set_printed(pub_id) {
-  await fetch("/api/vendor/set_printed", {
+  await fetch("vendor/set_printed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -367,7 +351,7 @@ export async function set_printed(pub_id) {
 }
 
 export async function set_paid(pub_id) {
-  await fetch("/api/vendor/set_paid", {
+  await fetch("vendor/set_paid", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -377,7 +361,7 @@ export async function set_paid(pub_id) {
 }
 
 export async function set_claimed(pub_id) {
-  await fetch("/api/vendor/set_claimed", {
+  await fetch("vendor/set_claimed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -387,7 +371,7 @@ export async function set_claimed(pub_id) {
 }
 
 export async function set_completed(pub_id) {
-  await fetch("/api/vendor/set_completed", {
+  await fetch("vendor/set_completed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -415,7 +399,7 @@ export async function updateAvailability() {
 
   const value = selected.value;
 
-  const response = await fetch(`/api/vendor/change_status`, {
+  const response = await fetch(`vendor/change_status`, {
     method: "POST", // or PATCH (better, but POST is fine for now)
     headers: {
       "Content-Type": "application/json",
@@ -455,7 +439,7 @@ export async function uploadGcash() {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch("/api/vendor/add_gcash", {
+  const response = await fetch("vendor/add_gcash", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + vendor_token,
@@ -467,7 +451,7 @@ export async function uploadGcash() {
 
   if (!response.ok) {
     console.error("Upload failed:", text);
-    return { error: true };
+    return;
   }
 
   const path = JSON.parse(text);
@@ -476,11 +460,11 @@ export async function uploadGcash() {
 
   alert("GCash QR uploaded!");
 
-  return { success: true };
+  window.location.href = <Link to="/vendor-login" />;
 }
 
 export async function downloadFile(file_path, pub_id) {
-  const response = await fetch("/api/vendor/download_file", {
+  const response = await fetch("vendor/download_file", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -515,7 +499,7 @@ export async function downloadFile(file_path, pub_id) {
 }
 
 export async function logout_vendor() {
-  const res = await fetch("/api/vendor/logout", {
+  const res = await fetch("http://localhost:3001/vendor/logout", {
     method: "GET",
     headers: {
       Authorization: "Bearer " + vendor_token,

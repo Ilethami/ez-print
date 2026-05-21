@@ -43,14 +43,6 @@ export default function ClientMap() {
     iconSize: [25, 25],
   });
 
-  // Array prepared for backend
-  // const vendors = vendors.map((vendor) => ({
-  //   id: vendor.id,
-  //   latitude: vendor.latitude,
-  //   longitude: vendor.longitude,
-  //   name: vendor.name,
-  // }));
-
   return (
     <div className="map">
       <MapContainer
