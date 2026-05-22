@@ -4,6 +4,7 @@ import store from "../assets/store.png";
 import order from "../assets/order.png";
 import history from "../assets/history.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import VendorMap from "./Vendor-Map";
 
 import StoreDetails from "./Popups/StoreDetails";
 import History from "./Popups/History";
@@ -127,6 +128,7 @@ export default function PartnerDash() {
             </button>
           </div>
         </div>
+        {/* Main Space */}
         <div className="flex-1 h-screen bg-white">
           {" "}
           <div className="mt-5">

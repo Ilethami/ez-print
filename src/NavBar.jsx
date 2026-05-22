@@ -13,6 +13,8 @@ export default function NavBar() {
   const hideImgRoutes = [
     "/client-login",
     "/partner-dash",
+    "/client-dash",
+
     "/vendor-signup",
     "/client-signup",
     "/vendor-login",
@@ -26,7 +28,7 @@ export default function NavBar() {
   return (
     <>
       <div
-        className={`absolute top-0 w-full overflow-hidden bg-[#ebeaea] px-[50px] py-[15px] shadow-[0px_0px_3px_5px_rgba(5,5,5,0.329)] flex flex-row justify-between items-center h-20 ${
+        className={`absolute top-0 w-full overflow-hidden bg-[#F6f5f5] px-[50px] py-[15px] shadow-[0px_0px_3px_5px_rgba(5,5,5,0.329)] flex flex-row justify-between items-center h-20 ${
           navbar ? "flex" : "hidden"
         }`}
       >

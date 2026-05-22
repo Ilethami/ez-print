@@ -5,39 +5,48 @@ import {
   Popup,
   useMap,
 } from "react-leaflet";
+
 import "leaflet/dist/leaflet.css";
-import "../styles/leaflet-map.css";
+
 import { useState, useEffect } from "react";
 import { Icon } from "leaflet";
+
 import vendorIcon from "../assets/location.png";
 import userIcon from "../assets/user.png";
 
 export default function VendorMap({
-  setSelectedVendor,
-  center,
-  setCenter,
-  setHasLocation,
+  setSelectedVendor = () => {},
+  center = [7.0731, 125.6128],
+  setCenter = () => {},
+  setHasLocation = () => {},
 }) {
-  const [userCoords, setUserCoords] = useState([77.0, 0.0]);
+  const [userCoords, setUserCoords] = useState(null);
   const [vendors, setVendors] = useState([]);
 
+  // GET USER LOCATION + VENDORS
   useEffect(() => {
-    // 👇 Get user location (with fallback)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = [pos.coords.latitude, pos.coords.longitude];
+
         setUserCoords(coords);
         setCenter(coords);
         setHasLocation(true);
       },
       (err) => console.error(err),
+      {
+        enableHighAccuracy: true, // 👈 important
+        timeout: 10000,
+        maximumAge: 0,
+      },
     );
-    // 👇 Fetch vendors (
+
     async function getVendors() {
       try {
         const res = await fetch(
           "http://localhost:3001/order/listvendors",
         );
+
         const vendors_res = await res.json();
 
         const formatted = vendors_res
@@ -51,61 +60,40 @@ export default function VendorMap({
 
         setVendors(formatted);
       } catch (err) {
-        console.error("Failed to fetch vendors:", err);
+        console.error(err);
       }
     }
 
     getVendors();
   }, []);
 
-  // 👇 auto center map when coords change
-  const ViewPos = () => {
+  // ✅ PROPER AUTO CENTER (FIX)
+  function ViewPos({ coords }) {
     const map = useMap();
 
     useEffect(() => {
-      if (!center || center.length !== 2) return;
+      if (!coords) return;
 
-      map.setView(center);
-    }, [center, map]);
+      map.setView(coords, 17, {
+        animate: true,
+      });
+    }, [coords, map]);
 
     return null;
-  };
-  const View = (setSelectedVendor) => {};
+  }
 
   const venIcon = new Icon({
     iconUrl: vendorIcon,
     iconSize: [25, 25],
   });
+
   const usrIcon = new Icon({
     iconUrl: userIcon,
     iconSize: [30, 30],
   });
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   return (
-    <div className="map">
+    <div className="w-full h-full">
       <MapContainer
         center={center}
         zoom={17}
@@ -114,29 +102,31 @@ export default function VendorMap({
         minZoom={8}
         maxBoundsViscosity={1}
         zoomControl={false}
+        className="w-full h-full overflow-hidden border border-[#ddd]"
       >
+        {/* TILE LAYER */}
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
           url="https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=lJtFOqKozfrpRPHc7tbo"
         />
 
-        <ViewPos />
-        <Marker
-          position={userCoords}
-          icon={usrIcon}
-          zIndexOffset={1000}
-        >
-          <Popup>
-            <b>Your Location</b>
-            {}
-            <br />
-            Latitude: {userCoords[0].toFixed(2)}
-            <br />
-            Longitude: {userCoords[1].toFixed(2)}
-          </Popup>
-        </Marker>
+        {/* AUTO CENTER ON USER */}
+        <ViewPos coords={userCoords} />
 
-        {/* 👇 markers from backend aka existing vendors */}
+        {/* USER MARKER */}
+        {userCoords && (
+          <Marker position={userCoords} icon={usrIcon}>
+            <Popup>
+              <b>Your Location</b>
+              <br />
+              Lat: {userCoords[0].toFixed(4)}
+              <br />
+              Lng: {userCoords[1].toFixed(4)}
+            </Popup>
+          </Marker>
+        )}
+
+        {/* VENDORS */}
         {vendors.map((vendor) => (
           <Marker
             key={vendor.id}
@@ -153,11 +143,6 @@ export default function VendorMap({
               <b>{vendor.brand}</b>
               <br />
               Status: {vendor.availability}
-              <br />
-              Lat: {vendor.latitude.toFixed(2)}
-              <br />
-              Lng: {vendor.longitude.toFixed(2)}
-              <br />
             </Popup>
           </Marker>
         ))}

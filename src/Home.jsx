@@ -8,6 +8,7 @@ import ClientLogin from "./Login/ClientLogin.jsx";
 import ClientSignup from "./Login/ClientSignup.jsx";
 import ezIcon from "./assets/ezicon.png";
 import Test from "./Test/Test.jsx";
+import ClientDash from "./Login/ClientDash.jsx";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
           <Route path="/client-login" element={<ClientLogin />} />
           <Route path="/client-signup" element={<ClientSignup />} />
           <Route path="/partner-dash" element={<PartnerDash />} />
+          <Route path="/client-dash" element={<ClientDash />} />
           <Route path="/vendor-signup" element={<CreateVendor />} />
           <Route path="/vendor-login" element={<VenDash />} />
           <Route path="/test" element={<Test />} />
