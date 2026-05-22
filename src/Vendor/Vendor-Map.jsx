@@ -40,7 +40,7 @@ export default function VendorMap({
         maximumAge: 0,
       },
     );
-
+    // get vendors function
     async function getVendors() {
       try {
         const res = await fetch(
@@ -92,6 +92,7 @@ export default function VendorMap({
     iconSize: [30, 30],
   });
 
+  // Map
   return (
     <div className="w-full h-full">
       <MapContainer
