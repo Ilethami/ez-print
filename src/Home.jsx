@@ -10,10 +10,12 @@ import ezIcon from "./assets/ezicon.png";
 import Test from "./Test/Test.jsx";
 import ClientDash from "./Login/ClientDash.jsx";
 
+const vite_env = import.meta.env.VITE_BASE_PATH;
+
 export default function Home() {
   return (
     <>
-      <BrowserRouter basename="/ez-print">
+      <BrowserRouter basename={vite_env}>
         <NavBar />
         <Routes>
           <Route path="/client-login" element={<ClientLogin />} />
