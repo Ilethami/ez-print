@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export async function createVendor() {
   const payload = {
     name: document.getElementById("name").value,
@@ -14,7 +12,7 @@ export async function createVendor() {
 
   console.log("Payload:", payload); // debug
 
-  const response = await fetch("vendor/new", {
+  const response = await fetch("http://localhost:3001/vendor/new", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +25,7 @@ export async function createVendor() {
     const text = await response.text();
     const token = JSON.parse(text);
     localStorage.setItem("vendor_token", token);
-    window.location.href = "https://ez-print.shop/uploadGcash";
+    // window.location.href = "http://localhost/gcash-upload";
   } else {
     const err = await response.text();
     console.error("Error:", err);

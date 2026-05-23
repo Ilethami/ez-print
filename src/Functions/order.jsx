@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-
 export async function get_vendors() {
-  const vendors = await fetch("order/listvendors");
+  const vendors = await fetch(
+    "http://localhost:3001/order/listvendors",
+  );
   const vendors_res = await vendors.json();
 
   const container = document.getElementById("vendor-list");
@@ -28,13 +28,16 @@ export async function get_vendors() {
 }
 
 export async function selectVendor(pub_id) {
-  const response = await fetch("order/choosevendor", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "http://localhost:3001/order/choosevendor",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pub_id }),
     },
-    body: JSON.stringify({ pub_id }),
-  });
+  );
 
   const res = await response.json();
   console.log("Selected:", res);
@@ -61,10 +64,13 @@ export async function uploadFile() {
   formData.append("file", file);
   formData.append("vendor_id", vendor);
 
-  const response = await fetch("order/attachfile", {
-    method: "POST",
-    body: formData,
-  });
+  const response = await fetch(
+    "http://localhost:3001/order/attachfile",
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
 
   const res = await response.json();
 
@@ -91,7 +97,7 @@ export async function review_order() {
 
   const order_data = { copies, vendor, color: colorValue };
 
-  const totalRes = await fetch("order/total", {
+  const totalRes = await fetch("http://localhost:3001/order/total", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -145,7 +151,7 @@ export async function createOrder(
     vendor,
   };
 
-  await fetch("order/createorder", {
+  await fetch("http://localhost:3001/order/createorder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

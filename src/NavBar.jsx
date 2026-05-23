@@ -13,6 +13,7 @@ export default function NavBar() {
     "/vendor-signup",
     "/client-signup",
     "/vendor-login",
+    "/upload-gcash",
   ];
 
   const hideImg = hideImgRoutes.some((route) =>

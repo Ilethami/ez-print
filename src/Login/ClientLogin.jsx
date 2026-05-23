@@ -27,7 +27,7 @@ export default function ClientLogin() {
       {/* Form */}
       <form className="flex flex-col items-center w-[90%] max-w-full mx-auto my-[80px] p-[40px] rounded-[20px] text-center">
         <h1 className="text-[30px] font-bold mb-[20px] font-open-sans">
-          Client Login
+          Login
         </h1>
 
         {/* Grid */}
@@ -68,17 +68,6 @@ export default function ClientLogin() {
           </button>
         </div>
       </form>
-
-      {/* Payment Section */}
-      <div id="payment-section" style={{ display: "none" }}>
-        <h3>Payment</h3>
-
-        <img id="gcash-img" width="200" />
-        <input type="file" id="receipt-input" />
-        <button onClick={c.submitReceipt}>Submit Receipt</button>
-      </div>
-
-      <div id="orders-container"></div>
     </>
   );
 }

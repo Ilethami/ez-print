@@ -17,10 +17,9 @@ export default function Orders({
 
   return (
     <div
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                    w-[520px] max-h-[650px] bg-white border border-gray-300
-                    rounded-lg shadow-lg z-[1000] p-4
-                    flex flex-col gap-3 overflow-y-auto"
+      className="w-full h-full bg-white border border-gray-200
+             rounded-b-lg shadow-lg -z-[1000] p-4 
+             flex flex-col gap-3 overflow-y-auto"
     >
       <h3 className="text-lg font-semibold">Orders</h3>
 

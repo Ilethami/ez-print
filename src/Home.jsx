@@ -7,7 +7,7 @@ import VenDash from "./Vendor/Vendor-Login.jsx";
 import ClientLogin from "./Login/ClientLogin.jsx";
 import ClientSignup from "./Login/ClientSignup.jsx";
 import ezIcon from "./assets/ezicon.png";
-import Test from "./Test/Test.jsx";
+import Gcash from "./Vendor/Gcash.jsx";
 import ClientDash from "./Login/ClientDash.jsx";
 
 const vite_env = import.meta.env.VITE_BASE_PATH;
@@ -24,7 +24,7 @@ export default function Home() {
           <Route path="/client-dash" element={<ClientDash />} />
           <Route path="/vendor-signup" element={<CreateVendor />} />
           <Route path="/vendor-login" element={<VenDash />} />
-          <Route path="/test" element={<Test />} />
+          <Route path="/upload-gcash" element={<Gcash />} />
         </Routes>
       </BrowserRouter>
     </>

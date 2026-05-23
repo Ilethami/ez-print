@@ -21,6 +21,7 @@ export default function VendorMap({
   setHasLocation = () => {},
 }) {
   const [userCoords, setUserCoords] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
   // =========================
   // USER LOCATION
@@ -33,8 +34,18 @@ export default function VendorMap({
         setUserCoords(coords);
         setCenter(coords);
         setHasLocation(true);
+        setIsReady(true);
       },
-      (err) => console.error(err),
+      (err) => {
+        console.error("Geolocation error:", err);
+
+        const fallback = [7.0731, 125.6128];
+
+        setUserCoords(fallback);
+        setCenter(fallback);
+        setHasLocation(false);
+        setIsReady(true);
+      },
       {
         enableHighAccuracy: true,
         timeout: 10000,
@@ -44,13 +55,13 @@ export default function VendorMap({
   }, []);
 
   // =========================
-  // AUTO CENTER CONTROL
+  // AUTO FLY TO CENTER
   // =========================
   function ViewPos({ coords }) {
     const map = useMap();
 
     useEffect(() => {
-      if (!coords) return;
+      if (!coords || coords[0] == null || coords[1] == null) return;
 
       map.flyTo(coords, 17, {
         animate: true,
@@ -58,6 +69,45 @@ export default function VendorMap({
     }, [coords, map]);
 
     return null;
+  }
+
+  // =========================
+  // 📍 GO TO MY LOCATION BUTTON
+  // =========================
+  function GoToMyLocationButton() {
+    const map = useMap();
+
+    const goToMyLocation = () => {
+      if (!userCoords) return;
+
+      map.flyTo(userCoords, 17, {
+        animate: true,
+      });
+
+      setCenter(userCoords);
+    };
+
+    return (
+      <div className="leaflet-top leaflet-right mt-3 mr-3">
+        <div className="leaflet-control leaflet-bar bg-white shadow rounded  ">
+          <button
+            onClick={goToMyLocation}
+            className="
+    px-[10px] py-[8px]
+    cursor-pointer
+    bg-white
+    border-none
+    font-bold
+    hover:bg-gray-200
+    transition
+    rounded
+  "
+          >
+            📍 My Location
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // =========================
@@ -73,6 +123,17 @@ export default function VendorMap({
     iconSize: [30, 30],
   });
 
+  // =========================
+  // LOADING STATE
+  // =========================
+  if (!isReady || !center) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Loading map...
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full">
       <MapContainer
@@ -87,8 +148,11 @@ export default function VendorMap({
           url="https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=lJtFOqKozfrpRPHc7tbo"
         />
 
-        {/* THIS NOW FOLLOWS CLICKED VENDOR OR USER */}
+        {/* AUTO CENTER */}
         <ViewPos coords={center} />
+
+        {/* 📍 BUTTON */}
+        <GoToMyLocationButton />
 
         {/* USER MARKER */}
         {userCoords && (
@@ -98,25 +162,27 @@ export default function VendorMap({
         )}
 
         {/* VENDOR MARKERS */}
-        {vendors.map((vendor) => (
-          <Marker
-            key={vendor.id}
-            position={[vendor.latitude, vendor.longitude]}
-            icon={venIcon}
-            eventHandlers={{
-              click: () => {
-                setSelectedVendor(vendor);
-                setCenter([vendor.latitude, vendor.longitude]);
-              },
-            }}
-          >
-            <Popup>
-              <b>{vendor.brand}</b>
-              <br />
-              Status: {vendor.availability}
-            </Popup>
-          </Marker>
-        ))}
+        {vendors
+          .filter((v) => v.latitude != null && v.longitude != null)
+          .map((vendor) => (
+            <Marker
+              key={vendor.id}
+              position={[vendor.latitude, vendor.longitude]}
+              icon={venIcon}
+              eventHandlers={{
+                click: () => {
+                  setSelectedVendor(vendor);
+                  setCenter([vendor.latitude, vendor.longitude]);
+                },
+              }}
+            >
+              <Popup>
+                <b>{vendor.brand || vendor.name}</b>
+                <br />
+                Status: {vendor.availability || vendor.status}
+              </Popup>
+            </Marker>
+          ))}
       </MapContainer>
     </div>
   );

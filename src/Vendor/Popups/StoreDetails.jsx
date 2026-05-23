@@ -1,61 +1,115 @@
-import { useRef, useState } from "react";
-import * as log from "../../Functions/login_vendor";
+import { useEffect, useState } from "react";
 
-export default function StoreDetails({ setActivePanel }) {
-  const fileRef = useRef(null);
-  const [fileName, setFileName] = useState("");
+const vendor_token = localStorage.getItem("vendor_token");
+
+export default function StoreDetails() {
+  const [vendor, setVendor] = useState(null);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        // ======================
+        // VENDOR DETAILS (same style as your vendor file)
+        // ======================
+        const vendorRes = await fetch(
+          "http://localhost:3001/vendor/home",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + vendor_token,
+            },
+          },
+        );
+
+        const vendorText = await vendorRes.text();
+        const vendorData = JSON.parse(vendorText);
+
+        // handle array OR object (your backend is inconsistent)
+        const currentVendor = Array.isArray(vendorData)
+          ? vendorData[0]
+          : vendorData;
+
+        setVendor(currentVendor);
+
+        // ======================
+        // ORDERS (same style as your vendor/orders file)
+        // ======================
+        const ordersRes = await fetch(
+          "http://localhost:3001/vendor/orders",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + vendor_token,
+            },
+          },
+        );
+
+        const ordersText = await ordersRes.text();
+        const orders = JSON.parse(ordersText);
+
+        const count = (orders || []).filter(
+          (o) => o.vendor === currentVendor?.pub_id,
+        ).length;
+
+        setTotalOrders(count);
+      } catch (err) {
+        console.error("StoreDetails error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, []);
+
+  if (loading) {
+    return <div className="p-4 w-full h-full">Loading...</div>;
+  }
+
+  if (!vendor) {
+    return <div className="p-4 w-full h-full">No vendor found</div>;
+  }
 
   return (
-    <div
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                    w-[500px] h-[600px] bg-white border border-gray-300
-                    rounded-lg shadow-lg z-[1000] p-4 flex flex-col justify-between"
-    >
-      {/* Content */}
-      <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">Upload GCash QR</h3>
+    <div className="w-full h-full bg-white border border-gray-300 shadow-lg p-4">
+      <h2 className="text-2xl font-semibold mb-4">Store Details</h2>
 
-        {/* Hidden input */}
-        <input
-          ref={fileRef}
-          type="file"
-          id="gcash-file"
-          className="hidden"
-          onChange={(e) =>
-            setFileName(e.target.files?.[0]?.name || "")
-          }
-        />
-
-        {/* Custom file button */}
-        <button
-          type="button"
-          onClick={() => fileRef.current.click()}
-          className="bg-gray-200 text-black px-4 py-2 rounded hover:bg-gray-300 transition"
-        >
-          Choose File
-        </button>
-
-        {/* File name display */}
-        <p className="text-sm text-gray-600">
-          {fileName || "No file selected"}
+      <div className="flex flex-col gap-2 text-sm">
+        <p>
+          <b>Brand:</b> {vendor.brand || "N/A"}
         </p>
 
-        {/* Upload button */}
-        <button
-          onClick={log.uploadGcash}
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
-        >
-          Upload
-        </button>
-      </div>
+        {/* FIX: supports both naming styles */}
+        <p>
+          <b>Email:</b> {vendor.email || "N/A"}
+        </p>
 
-      {/* Close Button */}
-      <button
-        onClick={() => setActivePanel(null)}
-        className="bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
-      >
-        Close
-      </button>
+        <p>
+          <b>B/W Rate:</b> ₱{vendor.bw_rate ?? vendor.bwRate ?? "N/A"}
+        </p>
+
+        <p>
+          <b>Color Rate:</b> ₱
+          {vendor.clrd_rate ?? vendor.colorRate ?? "N/A"}
+        </p>
+
+        <p>
+          <b>Latitude:</b> {vendor.lat}
+        </p>
+        <p>
+          <b>Longitude:</b> {vendor.long}
+        </p>
+
+        <hr className="my-2" />
+
+        <p>
+          <b>Total Orders:</b> {totalOrders}
+        </p>
+      </div>
     </div>
   );
 }

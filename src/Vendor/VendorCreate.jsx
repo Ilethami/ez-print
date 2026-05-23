@@ -1,35 +1,33 @@
 import { useEffect, useState } from "react";
+import VendorMap from "./Vendor-Map";
+import * as v from "../Functions/create_vendor.jsx";
 import { useNavigate } from "react-router-dom";
 
-import { createVendor } from "../Functions/create_vendor.jsx";
-import VendorMap from "./Vendor-Map";
-
 export default function CreateVendor() {
-  const navigate = useNavigate();
-
   const [center, setCenter] = useState([0, 0]);
   const [hasLocation, setHasLocation] = useState(false);
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    pw: "",
-    email: "",
-    bw_rate: "",
-    clrd_rate: "",
-    lat: "",
-    long: "",
-  });
+  async function handleSignup() {
+    const password = document.getElementById("pw").value;
+    if (password.length == 0) {
+      return alert("Password cannot be empty");
+    }
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
+    const name = document.getElementById("name").value;
+    if (name.trim() === "") {
+      return alert("Name cannot be empty");
+    }
 
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
+    const email = document.getElementById("email").value;
+    if (!email.includes("@") || !email.includes(".com")) {
+      return alert("Invalid email");
+    }
 
+    await v.createVendor();
+    navigate("/upload-gcash");
+  }
+  // Location getter
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
@@ -44,11 +42,12 @@ export default function CreateVendor() {
         setCenter([lat, lng]);
         setHasLocation(true);
 
-        setFormData((prev) => ({
-          ...prev,
-          lat: lat.toString(),
-          long: lng.toString(),
-        }));
+        // fill DOM inputs directly (required for your createVendor)
+        const latInput = document.getElementById("lat");
+        const longInput = document.getElementById("long");
+
+        if (latInput) latInput.value = lat;
+        if (longInput) longInput.value = lng;
 
         alert("Location acquired successfully!");
       },
@@ -56,48 +55,8 @@ export default function CreateVendor() {
         console.log(error);
         alert("Unable to get location");
       },
-      {
-        enableHighAccuracy: true,
-      },
+      { enableHighAccuracy: true },
     );
-  };
-
-  useEffect(() => {
-    const lat = parseFloat(formData.lat);
-    const lng = parseFloat(formData.long);
-
-    if (!isNaN(lat) && !isNaN(lng)) {
-      setCenter([lat, lng]);
-    }
-  }, [formData.lat, formData.long]);
-
-  const handleSignup = async () => {
-    if (
-      !formData.email.includes("@") ||
-      !formData.email.includes(".com")
-    ) {
-      alert("Invalid email");
-      return;
-    }
-
-    Object.entries(formData).forEach(([key, value]) => {
-      let input = document.getElementById(key);
-
-      if (!input) {
-        input = document.createElement("input");
-        input.type = "hidden";
-        input.id = key;
-        document.body.appendChild(input);
-      }
-
-      input.value = value;
-    });
-
-    try {
-      await createVendor();
-    } catch (error) {
-      alert("Server error");
-    }
   };
 
   return (
@@ -110,12 +69,10 @@ export default function CreateVendor() {
         <div className="relative flex items-center justify-center w-[870px]">
           {/* Left SVG */}
           <div className="absolute left-0 group cursor-pointer w-[40px] h-[40px] flex items-center justify-center">
-            {/* Hover Background */}
             <div className="absolute inset-0 rounded-[7.5px] bg-[#E8E8E8] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <div className="w-full h-full rounded-[7.5px] bg-black/10" />
             </div>
 
-            {/* Arrow */}
             <svg
               className="relative z-10"
               width="33"
@@ -134,7 +91,7 @@ export default function CreateVendor() {
             </svg>
           </div>
 
-          {/* Center Title */}
+          {/* Title */}
           <h1 className="text-[30px] mb-[10px] font-bold font-open-sans max-[480px]:text-[24px]">
             Become Our Partner
           </h1>
@@ -149,36 +106,27 @@ export default function CreateVendor() {
           />
         </div>
 
-        {/* Grid */}
+        {/* GRID (UNCHANGED STYLING) */}
         <div className="self-center grid grid-cols-2 gap-[18px] mt-[20px] bg-[rgb(220,220,220)] px-[30px] pt-[35px] pb-[50px] border border-[rgb(0,0,0,0.25)] rounded-[1em] w-[870px] max-[768px]:gap-[14px] max-[768px]:w-full max-[480px]:grid-cols-1">
           <InputField
             label="Employee Name"
             id="name"
-            value={formData.name}
-            onChange={handleChange}
             ph="e.g. Zulueta, Eli"
           />
-
           <InputField
             label="Company Name/Brand"
             id="brand"
-            value={formData.brand}
-            onChange={handleChange}
             ph="Enter company or brand name"
           />
           <InputField
             label="Company Email"
             id="email"
-            value={formData.email}
-            onChange={handleChange}
             ph="e.g. 1234@email.com"
           />
           <InputField
             label="Password"
             id="pw"
             type="password"
-            value={formData.pw}
-            onChange={handleChange}
             ph="Enter password"
           />
 
@@ -186,17 +134,12 @@ export default function CreateVendor() {
             label="B/W Rate"
             id="bw_rate"
             type="number"
-            value={formData.bw_rate}
-            onChange={handleChange}
             ph="e.g. 2.00"
           />
-
           <InputField
             label="Color Rate"
             id="clrd_rate"
             type="number"
-            value={formData.clrd_rate}
-            onChange={handleChange}
             ph="e.g. 5.00"
           />
 
@@ -204,20 +147,16 @@ export default function CreateVendor() {
             label="Latitude"
             id="lat"
             type="number"
-            value={formData.lat}
-            onChange={handleChange}
             ph="Enter latitude"
           />
-
           <InputField
             label="Longitude"
             id="long"
             type="number"
-            value={formData.long}
-            onChange={handleChange}
             ph="Enter longitude"
           />
-          {/* Buttons */}
+
+          {/* BUTTONS */}
           <div className="col-span-2 flex justify-center gap-[15px] mt-[30px] max-[480px]:col-span-1 max-[480px]:flex-col">
             <button
               type="button"
@@ -241,14 +180,8 @@ export default function CreateVendor() {
   );
 }
 
-function InputField({
-  label,
-  id,
-  type = "text",
-  value,
-  onChange,
-  ph,
-}) {
+/* INPUT (STYLING UNCHANGED) */
+function InputField({ label, id, type = "text", ph }) {
   return (
     <div className="flex flex-col gap-[6px] ml-[5px]">
       <p className="text-[13px] font-medium text-[#222] text-left font-inter">
@@ -259,11 +192,8 @@ function InputField({
       <input
         id={id}
         type={type}
-        value={value}
-        onChange={onChange}
         placeholder={ph}
-        className="p-[14px] rounded-[0.5em] border border-[rgb(0,0,0,0.25)] bg-[#E8E8E8] text-[14px] outline-none appearance-none placeholder:text-[#9a9a9a] focus:placeholder:opacity-50 transition-all duration-200 max-[480px]:text-[13px] max-[480px]:p-[12px]
-        "
+        className="p-[14px] rounded-[0.5em] border border-[rgb(0,0,0,0.25)] bg-[#E8E8E8] text-[14px] outline-none appearance-none placeholder:text-[#9a9a9a] focus:placeholder:opacity-50 transition-all duration-200 max-[480px]:text-[13px] max-[480px]:p-[12px]"
       />
     </div>
   );

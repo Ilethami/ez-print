@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 export function formatTimestamp(timestamp) {
   if (!timestamp) {
     return "Pending";
@@ -18,13 +17,16 @@ export async function signup() {
     pw_hash: document.getElementById("signup-password").value, // matches backend
   };
 
-  const response = await fetch("user/new_account", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "http://localhost:3001/user/new_account",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+  );
 
   const text = await response.text();
 
@@ -39,7 +41,7 @@ export async function signup() {
 
   alert("Account created!");
 
-  window.location.href = <Link to="/client-login" />;
+  // window.location.href = "https://ez-print.shop/login";
 }
 
 export async function login() {
@@ -48,7 +50,7 @@ export async function login() {
     pw: document.getElementById("login-password").value,
   };
 
-  const response = await fetch("user/login", {
+  const response = await fetch("http://localhost:3001/user/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -88,7 +90,7 @@ export async function loadUserOrders() {
 
   const filter = document.getElementById("order-filter").value;
 
-  let url = "user/orders";
+  let url = "http://localhost:3001/user/orders";
 
   if (filter) {
     url += `?state=${filter}`;
@@ -155,7 +157,9 @@ let currentOrderId = null;
 export async function openPayment(orderId, vendorId) {
   currentOrderId = orderId;
 
-  const response = await fetch(`order/${vendorId}/gcash`);
+  const response = await fetch(
+    `http://localhost:3001/order/${vendorId}/gcash`,
+  );
 
   if (!response.ok) {
     console.error("Failed to load GCash QR");
@@ -184,7 +188,7 @@ export async function submitReceipt() {
   formData.append("file", file);
 
   const response = await fetch(
-    `order/${currentOrderId}/submit_reciept`,
+    `http://localhost:3001/order/${currentOrderId}/submit_reciept`,
     {
       method: "POST",
       body: formData,
@@ -204,5 +208,5 @@ export async function submitReceipt() {
 
 export function logout() {
   localStorage.removeItem("usr_token");
-  window.location.href = <Link to="/" />;
+  window.location.href = "https://ez-print.shop";
 }
