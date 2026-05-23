@@ -1,37 +1,27 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ezIcon from "./assets/ezicon.png";
 import ezbg from "./assets/homebg.png";
 
 export default function NavBar() {
-  const navigate = useNavigate();
   const location = useLocation();
-
-  const navbar =
-    location.pathname === "/" ||
-    location.pathname === "/vendor-signup";
+  const path = location.pathname;
 
   const hideImgRoutes = [
     "/client-login",
     "/partner-dash",
     "/client-dash",
-
     "/vendor-signup",
     "/client-signup",
     "/vendor-login",
-    "/test",
   ];
 
-  const img = hideImgRoutes.some((route) =>
-    location.pathname.startsWith(route),
+  const hideImg = hideImgRoutes.some((route) =>
+    path.startsWith(route),
   );
 
   return (
     <>
-      <div
-        className={`absolute top-0 w-full overflow-hidden bg-[#F6f5f5] px-[50px] py-[15px] shadow-[0px_0px_3px_5px_rgba(5,5,5,0.329)] flex flex-row justify-between items-center h-20 ${
-          navbar ? "flex" : "hidden"
-        }`}
-      >
+      <div className="absolute top-0 w-full overflow-hidden bg-[#F6f5f5] px-[50px] py-[15px] shadow-[0px_0px_3px_5px_rgba(5,5,5,0.329)] flex flex-row justify-between items-center h-20">
         <Link to="/">
           <img
             src={ezIcon}
@@ -41,46 +31,58 @@ export default function NavBar() {
         </Link>
 
         <nav className="flex flex-row gap-[10px] items-center">
-          <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
-            <Link
-              to="/client-login"
-              className="no-underline text-inherit font-inter font-semibold text-lg"
-            >
-              Client Login
-            </Link>
-          </button>
+          {/* CLIENT LOGIN */}
+          {path !== "/client-login" && (
+            <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
+              <Link
+                to="/client-login"
+                className="no-underline text-inherit font-inter font-semibold text-lg"
+              >
+                Sign In
+              </Link>
+            </button>
+          )}
 
-          <button className="rounded-[15px] bg-black h-fit w-fit py-1.5 px-5  text-white transition cursor-pointer hover:opacity-80">
-            <Link
-              to="/vendor-login"
-              className="no-underline text-inherit font-inter font-semibold text-lg"
-            >
-              Login
-            </Link>
-          </button>
+          {/* CLIENT SIGNUP */}
+          {path !== "/client-signup" && (
+            <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
+              <Link
+                to="/client-signup"
+                className="no-underline text-inherit font-inter font-semibold text-lg"
+              >
+                Create Account
+              </Link>
+            </button>
+          )}
 
-          <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
-            <Link
-              to="/client-signup"
-              className="no-underline text-inherit font-inter font-semibold text-lg"
-            >
-              Client Signup
-            </Link>
-          </button>
-
-          <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
-            <Link
-              to="/vendor-signup"
-              className="no-underline text-inherit font-inter font-semibold text-lg"
-            >
-              Become a Partner
-            </Link>
-          </button>
+          {/* VENDOR SIGNUP */}
+          {path !== "/vendor-signup" && (
+            <button className="rounded-[15px] h-fit w-fit py-1.5 px-5 transition cursor-pointer hover:bg-[rgb(0,0,0,0.05)]">
+              <Link
+                to="/vendor-signup"
+                className="no-underline text-inherit font-inter font-semibold text-lg"
+              >
+                Become a Partner
+              </Link>
+            </button>
+          )}
+          {/* VENDOR LOGIN */}
+          {path !== "/vendor-login" && (
+            <button className="rounded-[15px] bg-black h-fit w-fit py-1.5 px-5 text-white transition cursor-pointer hover:opacity-80">
+              <Link
+                to="/vendor-login"
+                className="no-underline text-inherit font-inter font-semibold text-lg"
+              >
+                Partner Login
+              </Link>
+            </button>
+          )}
         </nav>
       </div>
 
+      {/* BACKGROUND IMAGE */}
       <div
-        className={`absolute -z-50 w-full ${img ? "hidden" : "block"}`}
+        className={`absolute -z-50 w-full ${hideImg ? "hidden" : "block"}`}
       >
         <img
           src={ezbg}
@@ -88,7 +90,6 @@ export default function NavBar() {
           className="w-full h-auto"
         />
 
-        {/* overlay */}
         <div className="absolute inset-0 bg-gray-500 opacity-30 pointer-events-none" />
       </div>
     </>

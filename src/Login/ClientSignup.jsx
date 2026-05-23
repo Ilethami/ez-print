@@ -1,21 +1,26 @@
 import * as c from "../Functions/client";
 import { useNavigate } from "react-router-dom";
 
-export default function ClientLogin() {
+export default function ClientSignup() {
   const navigate = useNavigate();
 
-  async function handleLogin() {
-    const password = document.getElementById("login-password").value;
-    if (password.length === 0) {
+  function handleSignup() {
+    const password = document.getElementById("signup-password").value;
+    if (password.length == 0) {
       return alert("Password cannot be empty");
     }
 
-    const name = document.getElementById("login-name").value;
+    const name = document.getElementById("signup-name").value;
     if (name.trim() === "") {
       return alert("Name cannot be empty");
     }
 
-    await c.login();
+    const email = document.getElementById("signup-email").value;
+    if (!email.includes("@") || !email.includes(".com")) {
+      return alert("Invalid email");
+    }
+
+    c.signup();
     navigate("/client-dash");
   }
 
@@ -27,7 +32,7 @@ export default function ClientLogin() {
       {/* Form */}
       <form className="flex flex-col items-center w-[90%] max-w-full mx-auto my-[80px] p-[40px] rounded-[20px] text-center">
         <h1 className="text-[30px] font-bold mb-[20px] font-open-sans">
-          Client Login
+          Client Account
         </h1>
 
         {/* Grid */}
@@ -38,9 +43,22 @@ export default function ClientLogin() {
               Name
             </p>
             <input
-              id="login-name"
+              id="signup-name"
               placeholder="Name"
               type="text"
+              className="p-[14px] rounded-[0.5em] border border-[rgb(0,0,0,0.25)] bg-[#E8E8E8] text-black placeholder:text-[#9a9a9a]"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="flex flex-col gap-[6px]">
+            <p className="text-[13px] font-medium text-[#222] text-left">
+              Email
+            </p>
+            <input
+              id="signup-email"
+              placeholder="Email"
+              type="email"
               className="p-[14px] rounded-[0.5em] border border-[rgb(0,0,0,0.25)] bg-[#E8E8E8] text-black placeholder:text-[#9a9a9a]"
             />
           </div>
@@ -51,34 +69,23 @@ export default function ClientLogin() {
               Password
             </p>
             <input
-              id="login-password"
+              id="signup-password"
               placeholder="Password"
               type="password"
               className="p-[14px] rounded-[0.5em] border border-[rgb(0,0,0,0.25)] bg-[#E8E8E8] text-black placeholder:text-[#9a9a9a]"
             />
           </div>
 
-          {/* Login Button */}
+          {/* Button */}
           <button
             type="button"
-            onClick={handleLogin}
-            className="col-span-2 mt-[30px] px-[60px] py-[15px] rounded-[40px] bg-[#27221F] text-white text-[16px] cursor-pointer transition hover:scale-[1.05] hover:bg-[#35302E] max-[480px]:col-span-1 mx-auto w-fit"
+            onClick={handleSignup}
+            className="col-span-2 mt-[30px] px-[60px] py-[15px] rounded-[40px] bg-[#27221F] text-white text-[16px] cursor-pointer transition hover:scale-[1.05] hover:bg-[#35302E] max-[480px]:col-span-1 mx-auto w-fit "
           >
-            Login
+            Sign Up
           </button>
         </div>
       </form>
-
-      {/* Payment Section */}
-      <div id="payment-section" style={{ display: "none" }}>
-        <h3>Payment</h3>
-
-        <img id="gcash-img" width="200" />
-        <input type="file" id="receipt-input" />
-        <button onClick={c.submitReceipt}>Submit Receipt</button>
-      </div>
-
-      <div id="orders-container"></div>
     </>
   );
 }
