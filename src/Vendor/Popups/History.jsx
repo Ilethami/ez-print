@@ -23,7 +23,7 @@ export default function History({ setActivePanel }) {
         />
 
         <button
-          onClick={log.uploadGcash}
+          onClick={Ven.uploadGcash}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
         >
           Upload
