@@ -7,8 +7,9 @@ export async function createVendor() {
     clrd_rate: parseFloat(document.getElementById("clrd_rate").value),
     lat: parseFloat(document.getElementById("lat").value),
     long: parseFloat(document.getElementById("long").value),
+    number: "1",
     brand: document.getElementById("brand").value,
-  };
+    };
 
   console.log("Payload:", payload); // debug
 

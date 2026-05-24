@@ -141,7 +141,7 @@ export async function createOrder(
     file,
     total: totalData,
     vendor,
-  };
+};
 
   await fetch("/api/order/createorder", {
     method: "POST",
@@ -155,7 +155,7 @@ export async function createOrder(
   alert("Order created successfully!");
   localStorage.removeItem("uploaded_file");
   localStorage.removeItem("selected_vendor");
-  window.location.href = "https://ez-print.shop/login";
+  window.location.href = "/client-dash";
 }
 
 get_vendors();

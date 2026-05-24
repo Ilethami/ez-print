@@ -145,23 +145,6 @@ export function renderVendorHome(data) {
     `;
 }
 
-let ordersVisible = false;
-
-export async function toggleOrders() {
-    const container = document.getElementById("orders-container");
-
-    ordersVisible = !ordersVisible;
-
-    if (!ordersVisible) {
-        container.style.display = "none";
-        return;
-    }
-
-    container.style.display = "block";
-
-    await loadOrders();
-}
-
 export async function loadOrders() {
     const vendor_token = localStorage.getItem("vendor_token");
 
@@ -190,8 +173,11 @@ export async function loadOrders() {
 export function renderOrders(orders) {
     const container = document.getElementById("orders-container");
 
-    container.innerHTML = "";
-
+    if (!container) {
+        console.error("orders-container not found");
+        return;
+    }
+ 
     if (!orders.length) {
         container.innerHTML = "<p>No pending orders</p>";
         return;
@@ -202,25 +188,47 @@ export function renderOrders(orders) {
 
         div.innerHTML = `
             <h3>Order: ${order.pub_id}</h3>
+
             <p>User: ${order.name}</p>
+
             <p>Copies: ${order.copies}</p>
+
             <p>Size: ${order.print_size}</p>
+
             <p>Color: ${order.color}</p>
+
             <p>Total: ${order.total}</p>
+
             <p>Status: ${order.status}</p>
-           
-            <button onclick="downloadFile('${order.file_path}', '${order.pub_id}')">
+
+            <button class="download-btn">
                 Download File
             </button>
 
-            <button onclick="acceptOrder('${order.pub_id}')">
+            <button class="accept-btn">
                 Accept
             </button>
 
-            <button onclick="rejectOrder('${order.pub_id}')">
+            <button class="reject-btn">
                 Reject
-            </button>
-        `;
+        </button>
+    `;
+
+
+        const downloadBtn = div.querySelector(".download-btn");
+            downloadBtn.addEventListener("click", () => {
+                downloadFile(order.file_path, order.pub_id);
+        });
+
+        const acceptBtn = div.querySelector(".accept-btn");
+            acceptBtn.addEventListener("click", () => {
+                acceptOrder(order.pub_id);
+        });
+
+        const rejectBtn = div.querySelector(".reject-btn");
+        rejectBtn.addEventListener("click", () => {
+            rejectOrder(order.pub_id);
+        });
 
         container.appendChild(div);
     });
@@ -282,7 +290,7 @@ export async function see_reciept(pub_id) {
 
 let handlingVisible = false;
 
-/* export async function toggleHandlingOrders() {
+export async function toggleHandlingOrders() {
     const container = document.getElementById("handling-container");
 
     handlingVisible = !handlingVisible;
@@ -295,7 +303,7 @@ let handlingVisible = false;
     container.style.display = "block";
 
     await loadHandlingOrders();
-}*/
+}
 
 export async function loadHandlingOrders() {
     const vendor_token = localStorage.getItem("vendor_token");
