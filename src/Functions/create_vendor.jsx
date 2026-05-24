@@ -9,7 +9,7 @@ export async function createVendor() {
     long: parseFloat(document.getElementById("long").value),
     number: document.getElementById("phone_number").value,
     brand: document.getElementById("brand").value,
-    };
+  };
 
   console.log("Payload:", payload); // debug
 

@@ -12,12 +12,12 @@ export default function History({ setActivePanel }) {
         <h2>Transaction History</h2>
 
         <select id="order-filter" onChange={Ven.applyFilter}>
-            <option value="Accepted">Accepted</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Paid">Paid</option>
-            <option value="Claimed">Claimed</option>
-            <option value="Printed">Printed</option>
-            <option value="Completed">Completed</option>
+          <option value="Accepted">Accepted</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Paid">Paid</option>
+          <option value="Claimed">Claimed</option>
+          <option value="Printed">Printed</option>
+          <option value="Completed">Completed</option>
         </select>
 
         <div

@@ -12,6 +12,7 @@ import ClientDash from "./Login/ClientDash.jsx";
 import History from "./Vendor/Popups/History.jsx";
 import Orders from "./Vendor/Popups/OrdersPopup.jsx";
 import StoreDetails from "./Vendor/Popups/StoreDetails.jsx";
+import ClientOrders from "./Login/ClientOrders.jsx";
 
 const vite_env = import.meta.env.VITE_BASE_PATH;
 
@@ -28,7 +29,9 @@ export default function Home() {
             <Route path="orders" element={<Orders />} />
             <Route path="history" element={<History />} />
           </Route>
-          <Route path="/client-dash" element={<ClientDash />} />
+          <Route path="/client-dash" element={<ClientDash />}>
+            <Route path="orders" element={<ClientOrders />} />
+          </Route>
           <Route path="/vendor-signup" element={<CreateVendor />} />
           <Route path="/vendor-login" element={<VenDash />} />
           <Route path="/upload-gcash" element={<Gcash />} />

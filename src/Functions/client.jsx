@@ -38,7 +38,7 @@ export async function signup() {
 
   alert("Account created!");
 
-  // window.location.href = "https://ez-print.shop/login";
+  window.location.href = "/client-login";
 }
 
 export async function login() {
@@ -77,8 +77,8 @@ export function apply_UserFilter() {
   loadUserOrders();
 }
 
-export async function loadUserOrders() {
-  const token = localStorage.getItem("usr_token");
+export async function loadUserOrders(setPaymentOpen, setPaymentData) { 
+    const token = localStorage.getItem("usr_token");
 
   if (!token) {
     console.log("No user logged in");
@@ -112,11 +112,19 @@ export async function loadUserOrders() {
 
   console.log("Orders:", orders);
 
-  renderUserOrders(orders);
+    renderUserOrders(
+        orders,
+        setPaymentOpen,
+        setPaymentData
+    );
 }
 
-export function renderUserOrders(orders) {
-  const container = document.getElementById("usr_orders-container");
+export function renderUserOrders(
+    orders,
+    setPaymentOpen,
+    setPaymentData
+) {
+  const container = document.getElementById("orders-list");
 
   container.innerHTML = "";
 
@@ -139,11 +147,24 @@ export function renderUserOrders(orders) {
             <p>completed on: ${formatTimestamp(order.completed_at)}</p>
 
 
-
-            <button onclick="openPayment('${order.o_pub_id}', '${order.v_pub_id}')">
+            <button class="pay-btn">
                 Pay
             </button>
-        `;
+    `;
+
+      const payBtn = div.querySelector(".pay-btn");
+
+    payBtn.addEventListener("click", async () => {
+
+        const data = await openPayment(
+            order.o_pub_id,
+            order.v_pub_id
+        );
+
+        setPaymentData(data);
+
+        setPaymentOpen(true);
+    });
 
     container.appendChild(div);
   });
@@ -152,22 +173,26 @@ export function renderUserOrders(orders) {
 let currentOrderId = null;
 
 export async function openPayment(orderId, vendorId) {
-  currentOrderId = orderId;
 
-  const response = await fetch(`/api/order/${vendorId}/gcash`);
+    currentOrderId = orderId;
 
-  if (!response.ok) {
-    console.error("Failed to load GCash QR");
-    return;
-  }
+    const response = await fetch(
+        `/api/order/${vendorId}/gcash`
+    );
 
-  const blob = await response.blob();
+    if (!response.ok) {
+        console.error("Failed to load GCash QR");
+        return null;
+    }
 
-  const imgUrl = URL.createObjectURL(blob);
+    const blob = await response.blob();
 
-  document.getElementById("gcash-img").src = imgUrl;
+    const imgUrl = URL.createObjectURL(blob);
 
-  document.getElementById("payment-section").style.display = "block";
+    return {
+        imgUrl,
+        orderId
+    };
 }
 
 export async function submitReceipt() {

@@ -1,68 +1,137 @@
-import { useRef, useState, useEffect } from "react";
-import * as log from "../../Functions/login_vendor"
-;
+import { useEffect, useState } from "react";
 
-export default function StoreDetails({ setActivePanel }) {
-  const fileRef = useRef(null);
-  const [fileName, setFileName] = useState("");
-    
-    useEffect(() => {
-        log.vendorDetails();
-    }, []);
+export default function StoreDetails() {
+  const [vendor, setVendor] = useState(null);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchVendor() {
+      try {
+        const token = localStorage.getItem("vendor_token");
+
+        const vendorRes = await fetch(
+          "/api/vendor/home",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        const vendorData = await vendorRes.json();
+        const currentVendor = Array.isArray(vendorData)
+          ? vendorData[0]
+          : vendorData;
+
+        setVendor(currentVendor);
+
+        const ordersRes = await fetch(
+          "/api/vendor/orders",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        const orders = await ordersRes.json();
+
+        const count = (orders || []).filter(
+          (o) => o.vendor === currentVendor?.pub_id,
+        ).length;
+
+        setTotalOrders(count);
+      } catch (err) {
+        console.error("StoreDetails error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchVendor();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-[#33313B] bg-[#f6f5f5]">
+        Loading store details...
+      </div>
+    );
+  }
+
+  if (!vendor) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-[#33313B] bg-[#f6f5f5]">
+        No vendor found
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                    w-[500px] h-[600px] bg-white border border-gray-300
-                    rounded-lg shadow-lg z-[1000] p-4 flex flex-col justify-between"
-    >
-      {/* Content */}
-      <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">Upload GCash QR</h3>
+    <div className="w-full h-full bg-[#f6f5f5] p-6 text-[#33313B]">
+      {/* Card */}
+      <div className="bg-white border border-[#33313B]/10 rounded-[1em] shadow-sm p-6 max-w-[900px] mx-auto">
+        {/* Header */}
+        <h2 className="text-2xl font-bold mb-6">Store Details</h2>
 
-        {/* Hidden input */}
-        <input
-          ref={fileRef}
-          type="file"
-          id="gcash-file"
-          className="hidden"
-          onChange={(e) =>
-            setFileName(e.target.files?.[0]?.name || "")
-          }
-        />
+        {/* Content Grid */}
+        <div className="grid grid-cols-2 gap-8 text-sm">
+          {/* Left */}
+          <div className="flex flex-col gap-3">
+            <p>
+              <span className="font-semibold">Brand:</span>{" "}
+              {vendor.brand}
+            </p>
+            <p>
+              <span className="font-semibold">Email:</span>{" "}
+              {vendor.email}
+            </p>
+            <p>
+              <span className="font-semibold">Status:</span>{" "}
+              {vendor.availability}
+            </p>
+          </div>
 
-        {/* Custom file button */}
-        <button
-          type="button"
-          onClick={() => fileRef.current.click()}
-          className="bg-gray-200 text-black px-4 py-2 rounded hover:bg-gray-300 transition"
-        >
-          Choose File
-        </button>
+          {/* Right */}
+          <div className="flex flex-col gap-3">
+            <p>
+              <span className="font-semibold">B/W Rate:</span> ₱
+              {vendor.bw_rate ?? vendor.bwRate ?? 0}
+            </p>
 
-        {/* File name display */}
-        <p className="text-sm text-gray-600">
-          {fileName || "No file selected"}
-        </p>
+            <p>
+              <span className="font-semibold">Color Rate:</span> ₱
+              {vendor.clrd_rate ?? vendor.colorRate ?? 0}
+            </p>
 
-        {/* Upload button */}
-        <button
-          onClick={log.uploadGcash}
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
-        >
-          Upload
-        </button>
+            <p>
+              <span className="font-semibold">Latitude:</span>{" "}
+              {vendor.lat}
+            </p>
+            <p>
+              <span className="font-semibold">Longitude:</span>{" "}
+              {vendor.long}
+            </p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="my-5 border-t border-[#33313B]/10" />
+
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <p className="font-semibold">Total Orders: {totalOrders}</p>
+
+          <div className="text-xs text-[#33313B]/60">
+            Vendor dashboard view
+          </div>
+        </div>
       </div>
-
-    <div id="vendor-details"></div> 
-
-      {/* Close Button */}
-      <button
-        onClick={() => setActivePanel(null)}
-        className="bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
-      >
-        Close
-      </button>
     </div>
   );
 }
