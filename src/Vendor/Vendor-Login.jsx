@@ -6,24 +6,18 @@ export default function VenDash() {
 
   async function handleLogin() {
     const password = document.getElementById("password").value;
-
-    if (!password) return alert("Password cannot be empty");
-
     const name = document.getElementById("username").value;
 
+    if (!password) return alert("Password cannot be empty");
     if (!name.trim()) return alert("Name cannot be empty");
 
     try {
-      const success = await Ven.vendorLogin();
+      await Ven.vendorLogin(); // just assume success if no error
 
-      if (success) {
-        navigate("/partner-dash");
-      } else {
-        alert("Invalid username or password");
-      }
+      navigate("/partner-dash");
     } catch (err) {
       console.error(err);
-      alert("Login failed");
+      alert("Invalid username or password");
     }
   }
 
@@ -42,11 +36,11 @@ export default function VenDash() {
           {/* Username */}
           <div className="flex flex-col gap-[6px]">
             <p className="text-[13px] font-medium text-[#33313B] text-left">
-              Email or Username
+              Username
             </p>
             <input
               id="username"
-              placeholder="Enter email or username"
+              placeholder="username"
               className="
                 p-[14px] rounded-[0.5em]
                 border border-[#33313B]/15
