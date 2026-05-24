@@ -6,13 +6,25 @@ export default function VenDash() {
 
   async function handleLogin() {
     const password = document.getElementById("password").value;
+
     if (!password) return alert("Password cannot be empty");
 
     const name = document.getElementById("username").value;
+
     if (!name.trim()) return alert("Name cannot be empty");
 
-    await Ven.vendorLogin();
-    navigate("/partner-dash");
+    try {
+      const success = await Ven.vendorLogin();
+
+      if (success) {
+        navigate("/partner-dash");
+      } else {
+        alert("Invalid username or password");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Login failed");
+    }
   }
 
   return (

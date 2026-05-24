@@ -11,7 +11,7 @@ export default function StoreDetails() {
         const token = localStorage.getItem("vendor_token");
 
         const vendorRes = await fetch(
-          "/api/vendor/home",
+          "http://localhost:3001/vendor/home",
           {
             method: "GET",
             headers: {
@@ -29,7 +29,7 @@ export default function StoreDetails() {
         setVendor(currentVendor);
 
         const ordersRes = await fetch(
-          "/api/vendor/orders",
+          "http://localhost:3001/vendor/orders",
           {
             method: "GET",
             headers: {

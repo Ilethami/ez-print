@@ -17,13 +17,16 @@ export async function signup() {
     pw_hash: document.getElementById("signup-password").value, // matches backend
   };
 
-  const response = await fetch("/api/user/new_account", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "http://localhost:3001/user/new_account",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+  );
 
   const text = await response.text();
 
@@ -47,7 +50,7 @@ export async function login() {
     pw: document.getElementById("login-password").value,
   };
 
-  const response = await fetch("/api/user/login", {
+  const response = await fetch("http://localhost:3001/user/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,8 +80,8 @@ export function apply_UserFilter() {
   loadUserOrders();
 }
 
-export async function loadUserOrders(setPaymentOpen, setPaymentData) { 
-    const token = localStorage.getItem("usr_token");
+export async function loadUserOrders(setPaymentOpen, setPaymentData) {
+  const token = localStorage.getItem("usr_token");
 
   if (!token) {
     console.log("No user logged in");
@@ -87,7 +90,7 @@ export async function loadUserOrders(setPaymentOpen, setPaymentData) {
 
   const filter = document.getElementById("order-filter").value;
 
-  let url = "/api/user/orders";
+  let url = "http://localhost:3001/user/orders";
 
   if (filter) {
     url += `?state=${filter}`;
@@ -112,17 +115,13 @@ export async function loadUserOrders(setPaymentOpen, setPaymentData) {
 
   console.log("Orders:", orders);
 
-    renderUserOrders(
-        orders,
-        setPaymentOpen,
-        setPaymentData
-    );
+  renderUserOrders(orders, setPaymentOpen, setPaymentData);
 }
 
 export function renderUserOrders(
-    orders,
-    setPaymentOpen,
-    setPaymentData
+  orders,
+  setPaymentOpen,
+  setPaymentData,
 ) {
   const container = document.getElementById("orders-list");
 
@@ -152,18 +151,14 @@ export function renderUserOrders(
             </button>
     `;
 
-      const payBtn = div.querySelector(".pay-btn");
+    const payBtn = div.querySelector(".pay-btn");
 
     payBtn.addEventListener("click", async () => {
+      const data = await openPayment(order.o_pub_id, order.v_pub_id);
 
-        const data = await openPayment(
-            order.o_pub_id,
-            order.v_pub_id
-        );
+      setPaymentData(data);
 
-        setPaymentData(data);
-
-        setPaymentOpen(true);
+      setPaymentOpen(true);
     });
 
     container.appendChild(div);
@@ -173,26 +168,25 @@ export function renderUserOrders(
 let currentOrderId = null;
 
 export async function openPayment(orderId, vendorId) {
+  currentOrderId = orderId;
 
-    currentOrderId = orderId;
+  const response = await fetch(
+    `http://localhost:3001/order/${vendorId}/gcash`,
+  );
 
-    const response = await fetch(
-        `/api/order/${vendorId}/gcash`
-    );
+  if (!response.ok) {
+    console.error("Failed to load GCash QR");
+    return null;
+  }
 
-    if (!response.ok) {
-        console.error("Failed to load GCash QR");
-        return null;
-    }
+  const blob = await response.blob();
 
-    const blob = await response.blob();
+  const imgUrl = URL.createObjectURL(blob);
 
-    const imgUrl = URL.createObjectURL(blob);
-
-    return {
-        imgUrl,
-        orderId
-    };
+  return {
+    imgUrl,
+    orderId,
+  };
 }
 
 export async function submitReceipt() {
@@ -208,7 +202,7 @@ export async function submitReceipt() {
   formData.append("file", file);
 
   const response = await fetch(
-    `/api/order/${currentOrderId}/submit_reciept`,
+    `http://localhost:3001/order/${currentOrderId}/submit_reciept`,
     {
       method: "POST",
       body: formData,

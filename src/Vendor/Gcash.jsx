@@ -10,8 +10,18 @@ export default function Gcash() {
   const navigate = useNavigate();
 
   const handleGcash = async () => {
-    await log.uploadGcash(file);
-    navigate("/partner-dash");
+    try {
+      const success = await log.uploadGcash(file);
+
+      if (success) {
+        navigate("/partner-dash");
+      } else {
+        alert("Failed to upload GCash QR");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed");
+    }
   };
 
   function handleFileChange(e) {

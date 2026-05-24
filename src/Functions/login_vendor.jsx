@@ -17,7 +17,7 @@ export async function vendorDetails() {
   const vendor_token = localStorage.getItem("vendor_token");
 
   const response = await fetch(
-    "/api/vendor/vendor_details",
+    "http://localhost:3001/vendor/vendor_details",
     {
       method: "GET",
       headers: {
@@ -71,7 +71,7 @@ export async function vendorLogin() {
     pw: document.getElementById("password").value,
   };
 
-  const response = await fetch("/api/vendor/login", {
+  const response = await fetch("http://localhost:3001/vendor/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export async function loadVendorHome() {
     return;
   }
 
-  const response = await fetch("/api/vendor/home", {
+  const response = await fetch("http://localhost:3001/vendor/home", {
     method: "get",
     headers: {
       "Content-Type": "application/json",
@@ -170,7 +170,7 @@ export async function loadOrders() {
   if (!vendor_token) return;
 
   const response = await fetch(
-    "/api/vendor/orders",
+    "http://localhost:3001/vendor/orders",
     {
       method: "GET",
       headers: {
@@ -206,46 +206,44 @@ export function renderOrders(orders) {
     const div = document.createElement("div");
 
     div.innerHTML = `
-            <h3>Order: ${order.pub_id}</h3>
-            <p>User: ${order.name}</p>
-            <p>Copies: ${order.copies}</p>
-            <p>Size: ${order.print_size}</p>
-            <p>Color: ${order.color}</p>
-            <p>Total: ${order.total}</p>
-            <p>Status: ${order.status}</p>
-           
-            <button class="download-btn">
-                Download File
-            </button>
-
-            <button class="accept-btn">
-                Accept
-            </button>
-
-            <button class="reject-btn">
-                Reject
-            </button>
+            <div className="flex flex-col">
+              <h3>Order: ${order.pub_id}</h3>
+              <p>User: ${order.name}</p>
+              <p>Copies: ${order.copies}</p>
+              <p>Size: ${order.print_size}</p>
+              <p>Color: ${order.color}</p>
+              <p>Total: ${order.total}</p>
+              <p>Status: ${order.status}</p>
+            </div>
+            <div className="flex-row gap-4 flex">
+              <button class="download-btn">
+                  Download File
+              </button>
+              <button class="accept-btn">
+                  Accept
+              </button>
+              <button class="reject-btn">
+                  Reject
+              </button>
+            </div>
             `;
 
-    const downloadBtn =
-        div.querySelector(".download-btn");
+    const downloadBtn = div.querySelector(".download-btn");
 
-    const acceptBtn =
-        div.querySelector(".accept-btn");
+    const acceptBtn = div.querySelector(".accept-btn");
 
-    const rejectBtn =
-        div.querySelector(".reject-btn");
+    const rejectBtn = div.querySelector(".reject-btn");
 
     downloadBtn.addEventListener("click", () => {
-        downloadFile(order.file_path, order.pub_id);
+      downloadFile(order.file_path, order.pub_id);
     });
 
     acceptBtn.addEventListener("click", () => {
-         acceptOrder(order.pub_id);
-    }); 
+      acceptOrder(order.pub_id);
+    });
 
     rejectBtn.addEventListener("click", () => {
-         rejectOrder(order.pub_id);
+      rejectOrder(order.pub_id);
     });
 
     container.appendChild(div);
@@ -254,7 +252,7 @@ export function renderOrders(orders) {
 
 export async function acceptOrder(pub_id) {
   const response = await fetch(
-    "/api/vendor/accept",
+    "http://localhost:3001/vendor/accept",
     {
       method: "POST",
       headers: {
@@ -278,7 +276,7 @@ export async function acceptOrder(pub_id) {
 
 export async function rejectOrder(pub_id) {
   const response = await fetch(
-    "/api/vendor/reject",
+    "http://localhost:3001/vendor/reject",
     {
       method: "POST",
       headers: {
@@ -302,7 +300,7 @@ export async function rejectOrder(pub_id) {
 
 export async function see_reciept(pub_id) {
   const response = await fetch(
-    `/api/order/${pub_id}/reciept`,
+    `http://localhost:3001/order/${pub_id}/reciept`,
   );
 
   if (!response.ok) {
@@ -337,7 +335,7 @@ export async function loadHandlingOrders() {
 
   const filter = document.getElementById("order-filter").value;
 
-  let url = "/api/vendor/handling_orders";
+  let url = "http://localhost:3001/vendor/handling_orders";
 
   if (filter) {
     url += `?state=${filter}`;
@@ -441,7 +439,7 @@ export async function renderHandlingOrders(orders) {
 }
 
 export async function set_printed(pub_id) {
-  await fetch("/api/vendor/set_printed", {
+  await fetch("http://localhost:3001/vendor/set_printed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -451,7 +449,7 @@ export async function set_printed(pub_id) {
 }
 
 export async function set_paid(pub_id) {
-  await fetch("/api/vendor/set_paid", {
+  await fetch("http://localhost:3001/vendor/set_paid", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -461,7 +459,7 @@ export async function set_paid(pub_id) {
 }
 
 export async function set_claimed(pub_id) {
-  await fetch("/api/vendor/set_claimed", {
+  await fetch("http://localhost:3001/vendor/set_claimed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -471,7 +469,7 @@ export async function set_claimed(pub_id) {
 }
 
 export async function set_completed(pub_id) {
-  await fetch("/api/vendor/set_completed", {
+  await fetch("http://localhost:3001/vendor/set_completed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
@@ -500,7 +498,7 @@ export async function updateAvailability() {
   const value = selected.value;
 
   const response = await fetch(
-    `/api/vendor/change_status`,
+    `http://localhost:3001/vendor/change_status`,
     {
       method: "POST", // or PATCH (better, but POST is fine for now)
       headers: {
@@ -543,7 +541,7 @@ export async function uploadGcash() {
   formData.append("file", file);
 
   const response = await fetch(
-    "/api/vendor/add_gcash",
+    "http://localhost:3001/vendor/add_gcash",
     {
       method: "POST",
       headers: {
@@ -571,7 +569,7 @@ export async function uploadGcash() {
 
 export async function downloadFile(file_path, pub_id) {
   const response = await fetch(
-    "/api/vendor/download_file",
+    "http://localhost:3001/vendor/download_file",
     {
       method: "POST",
       headers: {
@@ -608,7 +606,7 @@ export async function downloadFile(file_path, pub_id) {
 }
 
 export async function logout_vendor() {
-  const res = await fetch("/api/vendor/logout", {
+  const res = await fetch("http://localhost:3001/vendor/logout", {
     method: "GET",
     headers: {
       Authorization: "Bearer " + vendor_token,

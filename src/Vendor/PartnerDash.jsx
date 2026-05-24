@@ -15,7 +15,7 @@ export default function PartnerDash() {
     const vendor_token = localStorage.getItem("vendor_token");
     if (!vendor_token) return;
 
-    const res = await fetch("/api/vendor/orders", {
+    const res = await fetch("http://localhost:3001/vendor/orders", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 export async function get_vendors() {
   const vendors = await fetch(
-    "/api/order/listvendors",
+    "http://localhost:3001/order/listvendors",
   );
   const vendors_res = await vendors.json();
 
@@ -29,7 +29,7 @@ export async function get_vendors() {
 
 export async function selectVendor(pub_id) {
   const response = await fetch(
-    "/api/order/choosevendor",
+    "http://localhost:3001/order/choosevendor",
     {
       method: "POST",
       headers: {
@@ -65,7 +65,7 @@ export async function uploadFile() {
   formData.append("vendor_id", vendor);
 
   const response = await fetch(
-    "/api/order/attachfile",
+    "http://localhost:3001/order/attachfile",
     {
       method: "POST",
       body: formData,
@@ -97,7 +97,7 @@ export async function review_order() {
 
   const order_data = { copies, vendor, color: colorValue };
 
-  const totalRes = await fetch("/api/order/total", {
+  const totalRes = await fetch("http://localhost:3001/order/total", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export async function createOrder(
     vendor,
   };
 
-  await fetch("/api/order/createorder", {
+  await fetch("http://localhost:3001/order/createorder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
