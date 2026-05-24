@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 export function formatTimestamp(timestamp) {
   if (!timestamp) {
     return "Pending";
@@ -39,7 +38,7 @@ export async function signup() {
 
   alert("Account created!");
 
-  window.location.href = <Link to="/client-login" />;
+  // window.location.href = "https://ez-print.shop/login";
 }
 
 export async function login() {
@@ -59,7 +58,7 @@ export async function login() {
   const token = await response.json();
 
   if (!response.ok) {
-    console.error("Login failed");
+    console.error("Login failed:", text);
     alert("Invalid credentials");
     return;
   }
@@ -204,5 +203,5 @@ export async function submitReceipt() {
 
 export function logout() {
   localStorage.removeItem("usr_token");
-  window.location.href = <Link to="/" />;
+  window.location.href = "https://ez-print.shop";
 }

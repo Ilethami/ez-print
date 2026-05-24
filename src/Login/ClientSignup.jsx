@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function ClientSignup() {
   const navigate = useNavigate();
 
-  function handleSignup() {
+  async function handleSignup() {
     const password = document.getElementById("signup-password").value;
     if (password.length == 0) {
       return alert("Password cannot be empty");
@@ -20,7 +20,7 @@ export default function ClientSignup() {
       return alert("Invalid email");
     }
 
-    c.signup();
+    await c.signup();
     navigate("/client-dash");
   }
 
@@ -32,7 +32,7 @@ export default function ClientSignup() {
       {/* Form */}
       <form className="flex flex-col items-center w-[90%] max-w-full mx-auto my-[80px] p-[40px] rounded-[20px] text-center">
         <h1 className="text-[30px] font-bold mb-[20px] font-open-sans">
-          Client Account
+          Customer Registration
         </h1>
 
         {/* Grid */}

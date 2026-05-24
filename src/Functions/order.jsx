@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export async function get_vendors() {
   const vendors = await fetch("/api/order/listvendors");
   const vendors_res = await vendors.json();

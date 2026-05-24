@@ -3,13 +3,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function VenDash() {
-  const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogin() {
-    await Ven.vendorLogin();
+    const password = document.getElementById("password").value;
+    if (password.length == 0) {
+      return alert("Password cannot be empty");
+    }
 
-    setLoggedIn(true);
+    const name = document.getElementById("username").value;
+    if (name.trim() === "") {
+      return alert("Name cannot be empty");
+    }
+
+    await Ven.vendorLogin();
     navigate("/partner-dash");
   }
 
@@ -20,14 +27,12 @@ export default function VenDash() {
 
       {/* Form */}
       <form className="flex flex-col items-center w-[90%] max-w-full mx-auto my-[80px] p-[40px] rounded-[20px] text-center">
-        {/* Title */}
         <h1 className="text-[30px] font-bold mb-[20px] font-open-sans">
-          Vendor Login
+          Partner Login
         </h1>
 
-        {/* Grid Card */}
         <div className="grid grid-cols-1 gap-[18px] mt-[20px] bg-[rgb(220,220,220)] px-[30px] pt-[35px] pb-[50px] border border-[rgb(0,0,0,0.25)] rounded-[1em] w-[500px] max-[480px]:w-full">
-          {/* Username / Email */}
+          {/* Username */}
           <div className="flex flex-col gap-[6px]">
             <p className="text-[13px] font-medium text-[#222] text-left font-inter">
               Email or Username
