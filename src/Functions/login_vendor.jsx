@@ -13,6 +13,56 @@ export function formatTimestamp(timestamp) {
     });
 }
 
+export async function vendorDetails() {
+    const vendor_token = localStorage.getItem("vendor_token");
+
+    const response = await fetch("/api/vendor/vendor_details", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + vendor_token
+        }
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+        console.error("Failed to load home:", text);
+        return;
+    }
+
+    const data = JSON.parse(text);
+
+    console.log("Vendor home:", data);
+
+    renderVendorDetails(data);
+}
+
+export async function renderVendorDetails(data) {
+     const container = document.getElementById("vendor-details");
+
+    container.innerHTML = "";
+
+    if (!data.length) {
+        container.innerHTML = "<p>No data found</p>";
+        return;
+    }
+
+    const vendor = data[0];
+
+    container.innerHTML = `
+        <h3>Vendor Dashboard</h3>
+            <p>Brand: ${vendor.brand}</p>
+            <p>Email: ${vendor.email}</p>
+            <p>B/W Rate: ${vendor.bw_rate}</p>
+            <p>Color Rate: ${vendor.clrd_rate}</p>
+            <p>Location(lat): ${vendor.lat}<p>
+            <p>Location(long): ${vendor.long}</p>
+            <p>Phone number: ${vendor.number}</p>
+    `;
+}
+  
+
 export async function vendorLogin() {
     const payload = {
         name: document.getElementById("username").value,

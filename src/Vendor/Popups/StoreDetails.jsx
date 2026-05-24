@@ -1,9 +1,14 @@
-import { useRef, useState } from "react";
-import * as log from "../../Functions/login_vendor";
+import { useRef, useState, useEffect } from "react";
+import * as log from "../../Functions/login_vendor"
+;
 
 export default function StoreDetails({ setActivePanel }) {
   const fileRef = useRef(null);
   const [fileName, setFileName] = useState("");
+    
+    useEffect(() => {
+        log.vendorDetails();
+    }, []);
 
   return (
     <div
@@ -48,6 +53,8 @@ export default function StoreDetails({ setActivePanel }) {
           Upload
         </button>
       </div>
+
+    <div id="vendor-details"></div> 
 
       {/* Close Button */}
       <button

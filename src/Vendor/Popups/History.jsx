@@ -1,9 +1,9 @@
-import * as Ven from "../../Functions/login_vendor";
+import * as log from "../../Functions/login_vendor";
 import { useEffect, useState } from "react";
 
 export default function History({ setActivePanel }) {
      useEffect(() => {
-        Ven.loadHandlingOrders();
+        log.loadHandlingOrders();
      }, []);
 
   return (
@@ -23,7 +23,7 @@ export default function History({ setActivePanel }) {
         />
 
         <button
-          onClick={Ven.uploadGcash}
+          onClick={log.uploadGcash}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
         >
           Upload
@@ -36,7 +36,7 @@ export default function History({ setActivePanel }) {
 
             <select
                 id="order-filter"
-                onChange={Ven.applyFilter}
+                onChange={log.applyFilter}
             >
                 <option value="Paid">Paid</option>
                 <option value="Claimed">Claimed</option>
