@@ -1,4 +1,4 @@
-import * as log from "../../Functions/login_vendor";
+import * as Ven from "../../Functions/login_vendor";
 import { useEffect, useState } from "react";
 
 export default function History({ setActivePanel }) {
