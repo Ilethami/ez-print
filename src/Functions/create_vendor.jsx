@@ -12,11 +12,7 @@ export async function createVendor() {
 
   console.log("Payload:", payload); // debug
 
-<<<<<<< HEAD
   const response = await fetch("http://localhost:3001/vendor/new", {
-=======
-  const response = await fetch("/api/vendor/new", {
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -29,11 +25,7 @@ export async function createVendor() {
     const text = await response.text();
     const token = JSON.parse(text);
     localStorage.setItem("vendor_token", token);
-<<<<<<< HEAD
     // window.location.href = "http://localhost/gcash-upload";
-=======
-    window.location.href = "https://ez-print.shop/uploadGcash";
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
   } else {
     const err = await response.text();
     console.error("Error:", err);

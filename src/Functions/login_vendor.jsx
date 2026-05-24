@@ -18,7 +18,6 @@ export async function vendorLogin() {
     pw: document.getElementById("password").value,
   };
 
-<<<<<<< HEAD
   const response = await fetch("http://localhost:3001/vendor/login", {
     method: "POST",
     headers: {
@@ -26,15 +25,6 @@ export async function vendorLogin() {
     },
     body: JSON.stringify(payload),
   });
-=======
-    const response = await fetch("/api/vendor/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -62,7 +52,6 @@ export async function loadVendorHome() {
     return;
   }
 
-<<<<<<< HEAD
   const response = await fetch("http://localhost:3001/vendor/home", {
     method: "get",
     headers: {
@@ -70,15 +59,6 @@ export async function loadVendorHome() {
       Authorization: "Bearer " + vendor_token,
     },
   });
-=======
-    const response = await fetch("/api/vendor/home", {
-        method: "get",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -136,7 +116,6 @@ export async function loadOrders() {
 
   if (!vendor_token) return;
 
-<<<<<<< HEAD
   const response = await fetch(
     "http://localhost:3001/vendor/orders",
     {
@@ -147,15 +126,6 @@ export async function loadOrders() {
       },
     },
   );
-=======
-    const response = await fetch("/api/vendor/orders", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -209,7 +179,6 @@ export function renderOrders(orders) {
 }
 
 export async function acceptOrder(pub_id) {
-<<<<<<< HEAD
   const response = await fetch(
     "http://localhost:3001/vendor/accept",
     {
@@ -220,15 +189,6 @@ export async function acceptOrder(pub_id) {
       body: JSON.stringify(pub_id),
     },
   );
-=======
-    const response = await fetch("/api/vendor/accept", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(pub_id)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -243,7 +203,6 @@ export async function acceptOrder(pub_id) {
 }
 
 export async function rejectOrder(pub_id) {
-<<<<<<< HEAD
   const response = await fetch(
     "http://localhost:3001/vendor/reject",
     {
@@ -254,15 +213,6 @@ export async function rejectOrder(pub_id) {
       body: JSON.stringify(pub_id),
     },
   );
-=======
-    const response = await fetch("/api/vendor/reject", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(pub_id)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -277,13 +227,9 @@ export async function rejectOrder(pub_id) {
 }
 
 export async function see_reciept(pub_id) {
-<<<<<<< HEAD
   const response = await fetch(
     `http://localhost:3001/order/${pub_id}/reciept`,
   );
-=======
-    const response = await fetch(`/api/order/${pub_id}/reciept`);
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   if (!response.ok) {
     console.error("Failed to load GCash QR");
@@ -317,11 +263,7 @@ export async function loadHandlingOrders() {
 
   const filter = document.getElementById("order-filter").value;
 
-<<<<<<< HEAD
   let url = "http://localhost:3001/vendor/handling_orders";
-=======
-    let url = "/api/vendor/handling_orders";
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   if (filter) {
     url += `?state=${filter}`;
@@ -341,17 +283,10 @@ export async function loadHandlingOrders() {
     return;
   }
 
-<<<<<<< HEAD
   const orders = JSON.parse(text);
   renderHandlingOrders(orders);
 
   console.log(orders);
-=======
-    const orders = JSON.parse(text);
-    renderHandlingOrders(orders);
-
-    console.log(orders);
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 }
 
 export function applyFilter() {
@@ -378,29 +313,19 @@ export function handleOrderAction(action, pub_id) {
 }
 
 export async function renderHandlingOrders(orders) {
-<<<<<<< HEAD
   const container = document.getElementById("orders-list");
 
   if (!container) {
     console.error("orders-list not found");
     return;
   }
-=======
-    const container = document.getElementById("orders-list");
 
-    if (!container) {
-        console.error("orders-list not found");
-        return;
-    }
+  container.innerHTML = "";
 
-    container.innerHTML = "";
-
-    if (!orders.length) {
-        container.innerHTML = "<p> Empty </p>";
-        return;
-
-    }
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
+  if (!orders.length) {
+    container.innerHTML = "<p> Empty </p>";
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -436,7 +361,6 @@ export async function renderHandlingOrders(orders) {
             </select>        
         `;
 
-<<<<<<< HEAD
     const select = div.querySelector("select");
 
     select.addEventListener("change", (e) => {
@@ -455,80 +379,36 @@ export async function set_printed(pub_id) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
   });
-=======
-            const select = div.querySelector("select");
-    
-            select.addEventListener("change", (e) => {
-                handleOrderAction(e.target.value, order.pub_id);
-            });
-
-            container.appendChild(div);
-    }
-
-    console.log(orders);
-}
-
-export async function set_printed(pub_id) {
-    await fetch("/api/vendor/set_printed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    })
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   loadHandlingOrders();
 }
 
 export async function set_paid(pub_id) {
-<<<<<<< HEAD
   await fetch("http://localhost:3001/vendor/set_paid", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
   });
-=======
-    await fetch("/api/vendor/set_paid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   loadHandlingOrders();
 }
 
 export async function set_claimed(pub_id) {
-<<<<<<< HEAD
   await fetch("http://localhost:3001/vendor/set_claimed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
   });
-=======
-    await fetch("/api/vendor/set_claimed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   loadHandlingOrders();
 }
 
 export async function set_completed(pub_id) {
-<<<<<<< HEAD
   await fetch("http://localhost:3001/vendor/set_completed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pub_id),
   });
-=======
-    await fetch("/api/vendor/set_completed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pub_id)
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   loadHandlingOrders();
 }
@@ -552,7 +432,6 @@ export async function updateAvailability() {
 
   const value = selected.value;
 
-<<<<<<< HEAD
   const response = await fetch(
     `http://localhost:3001/vendor/change_status`,
     {
@@ -564,16 +443,6 @@ export async function updateAvailability() {
       body: JSON.stringify(value), // sending raw string
     },
   );
-=======
-    const response = await fetch(`/api/vendor/change_status`, {
-        method: "POST", // or PATCH (better, but POST is fine for now)
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + vendor_token
-        },
-        body: JSON.stringify(value) // sending raw string
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
@@ -606,7 +475,6 @@ export async function uploadGcash() {
   const formData = new FormData();
   formData.append("file", file);
 
-<<<<<<< HEAD
   const response = await fetch(
     "http://localhost:3001/vendor/add_gcash",
     {
@@ -617,29 +485,13 @@ export async function uploadGcash() {
       body: formData,
     },
   );
-=======
-    const response = await fetch("/api/vendor/add_gcash", {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + vendor_token
-        },
-        body: formData
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const text = await response.text();
 
-<<<<<<< HEAD
   if (!response.ok) {
     console.error("Upload failed:", text);
     return { error: true };
   }
-=======
-    if (!response.ok) {
-        console.error("Upload failed:", text);
-        return {error: true};
-    }
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const path = JSON.parse(text);
 
@@ -647,11 +499,7 @@ export async function uploadGcash() {
 
   alert("GCash QR uploaded!");
 
-<<<<<<< HEAD
   return { success: true };
-=======
-    return { success: true }
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 }
 
 export async function downloadFile(file_path, pub_id) {
@@ -670,24 +518,10 @@ export async function downloadFile(file_path, pub_id) {
     },
   );
 
-<<<<<<< HEAD
   if (!response.ok) {
     console.error("Download failed");
     return;
   }
-=======
-    const response = await fetch("/api/vendor/download_file", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": "bearer " + vendor_token
-        },
-        body: JSON.stringify({
-            file_path,
-            pub_id
-        })
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   const blob = await response.blob();
 
@@ -707,21 +541,12 @@ export async function downloadFile(file_path, pub_id) {
 }
 
 export async function logout_vendor() {
-<<<<<<< HEAD
   const res = await fetch("http://localhost:3001/vendor/logout", {
     method: "GET",
     headers: {
       Authorization: "Bearer " + vendor_token,
     },
   });
-=======
-    const res = await fetch("/api/vendor/logout", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + vendor_token
-        }
-    });
->>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
 
   if (!res.ok) {
     cosole.log("try again");
