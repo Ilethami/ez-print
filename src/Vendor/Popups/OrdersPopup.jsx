@@ -114,13 +114,6 @@ export default function Orders({
           </div>
         ))
       )}
-
-      <button
-        onClick={() => setActivePanel(null)}
-        className="mt-2 bg-red-500 text-white py-2 rounded"
-      >
-        Close
-      </button>
     </div>
   );
 }

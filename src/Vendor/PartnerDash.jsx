@@ -1,24 +1,16 @@
-import * as ven from "../Functions/login_vendor";
 import ezIcon from "../assets/ezicon.png";
 import store from "../assets/store.png";
 import order from "../assets/order.png";
 import history from "../assets/history.png";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import VendorMap from "./Vendor-Map";
 
-import StoreDetails from "./Popups/StoreDetails";
-import Orders from "./Popups/OrdersPopup";
-import History from "./Popups/History";
-
-import { useState, useEffect } from "react";
+import { Link, useNavigate, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function PartnerDash() {
-  const [activePanel, setActivePanel] = useState("store");
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
-  // =========================
-  // FETCH VENDOR ORDERS
-  // =========================
+  // FETCH ORDERS
   async function fetchVendorOrders() {
     const vendor_token = localStorage.getItem("vendor_token");
 
@@ -41,9 +33,6 @@ export default function PartnerDash() {
     setOrders(data);
   }
 
-  // =========================
-  // LOAD ON OPEN
-  // =========================
   useEffect(() => {
     fetchVendorOrders();
   }, []);
@@ -64,27 +53,27 @@ export default function PartnerDash() {
       </div>
 
       {/* SIDEBAR */}
-      <div className="h-screen w-[300px] bg-[#f0f0f0] p-5 flex flex-col items-center border-r">
-        <div className="flex flex-col mt-8 gap-2.5 w-fit items-start">
+      <div className="h-screen w-[300px] bg-[#f0f0f0] p-5 flex flex-col border-r">
+        <div className="flex flex-col mt-8 gap-2.5 w-full">
           <button
-            className="font-semibold text-xl font-open-sans flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full"
-            onClick={() => setActivePanel("store")}
+            className="font-medium text-xl flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full hover:cursor-pointer"
+            onClick={() => navigate("store")}
           >
             <img src={store} alt="store" />
             See store details
           </button>
 
           <button
-            className="font-semibold text-xl font-open-sans flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full"
-            onClick={() => setActivePanel("orders")}
+            className="font-medium text-xl flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full hover:cursor-pointer"
+            onClick={() => navigate("orders")}
           >
             <img src={order} alt="order" />
             Handling orders
           </button>
 
           <button
-            className="font-semibold text-xl font-open-sans flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full"
-            onClick={() => setActivePanel("history")}
+            className="font-medium text-xl flex gap-2 p-4 hover:bg-[#C5C5C5] rounded w-full hover:cursor-pointer"
+            onClick={() => navigate("history")}
           >
             <img src={history} alt="history" />
             History
@@ -94,23 +83,9 @@ export default function PartnerDash() {
 
       {/* MAIN AREA */}
       <div className="flex-1 h-screen bg-white">
-        <div className="h-full">
-          {activePanel === "store" && (
-            <StoreDetails setActivePanel={setActivePanel} />
-          )}
-
-          {activePanel === "orders" && (
-            <Orders
-              setActivePanel={setActivePanel}
-              orders={orders}
-              refreshOrders={fetchVendorOrders}
-            />
-          )}
-
-          {activePanel === "history" && (
-            <History setActivePanel={setActivePanel} />
-          )}
-        </div>
+        <Outlet
+          context={{ orders, refreshOrders: fetchVendorOrders }}
+        />
       </div>
     </div>
   );

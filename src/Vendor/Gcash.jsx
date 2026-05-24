@@ -5,25 +5,31 @@ import { useNavigate } from "react-router-dom";
 export default function Gcash() {
   const [fileName, setFileName] = useState("No GCash QR selected");
   const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
+
   const navigate = useNavigate();
-  const file = e.target.files[0];
 
   const handleGcash = async () => {
-    await log.uploadGcash();
+    await log.uploadGcash(file);
     navigate("/partner-dash");
   };
+
   function handleFileChange(e) {
-    if (!file) {
+    const selectedFile = e.target.files[0];
+
+    if (!selectedFile) {
+      setFile(null);
       setFileName("No GCash QR selected");
       setPreview(null);
       return;
     }
 
-    setFileName(file.name);
+    setFile(selectedFile);
+    setFileName(selectedFile.name);
 
     // show preview only if image
-    if (file.type.startsWith("image/")) {
-      setPreview(URL.createObjectURL(file));
+    if (selectedFile.type.startsWith("image/")) {
+      setPreview(URL.createObjectURL(selectedFile));
     } else {
       setPreview(null);
     }
@@ -38,7 +44,6 @@ export default function Gcash() {
         <div className="flex flex-col items-center gap-4">
           <h3 className="text-lg font-semibold">Upload GCash QR</h3>
 
-          {/* Hidden input */}
           <input
             type="file"
             id="gcash-file"
@@ -47,7 +52,6 @@ export default function Gcash() {
             onChange={handleFileChange}
           />
 
-          {/* Upload area */}
           <label
             htmlFor="gcash-file"
             className="w-[200px] h-[200px]
@@ -69,12 +73,10 @@ export default function Gcash() {
             )}
           </label>
 
-          {/* File name */}
           <p className="text-sm text-gray-600 text-center">
             {fileName}
           </p>
 
-          {/* Upload */}
           <button
             onClick={handleGcash}
             className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition w-full hover:cursor-pointer"

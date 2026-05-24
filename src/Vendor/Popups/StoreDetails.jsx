@@ -25,7 +25,6 @@ export default function StoreDetails() {
         );
 
         const vendorData = await vendorRes.json();
-        console.log("VENDOR RAW:", vendorData);
         const currentVendor = Array.isArray(vendorData)
           ? vendorData[0]
           : vendorData;
