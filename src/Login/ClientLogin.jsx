@@ -68,6 +68,20 @@ export default function ClientLogin() {
           </button>
         </div>
       </form>
+
+      {/* Payment Section */}
+      <div id="payment-section" style={{ display: "none" }}>
+        <h3>Payment</h3>
+
+        {/* Login Button */}
+        <button
+          type="button"
+          onClick={handleLogin}
+          className="col-span-2 mt-[30px] px-[60px] py-[15px] rounded-[40px] bg-[#27221F] text-white text-[16px] cursor-pointer transition hover:scale-[1.05] hover:bg-[#35302E] max-[480px]:col-span-1 mx-auto w-fit"
+        >
+          Login
+        </button>
+      </div>
     </>
   );
 }

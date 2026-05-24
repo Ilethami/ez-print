@@ -1,10 +1,9 @@
-import * as Ven from "../../Functions/login_vendor";
-import { useEffect, useState } from "react";
+import * as log from "../../Functions/login_vendor";
 
 export default function History({ setActivePanel }) {
-  useEffect(() => {
-    Ven.loadHandlingOrders();
-  }, []);
+     useEffect(() => {
+        Ven.loadHandlingOrders();
+     }, []);
 
   return (
     <div
@@ -23,25 +22,31 @@ export default function History({ setActivePanel }) {
         />
 
         <button
-          onClick={Ven.uploadGcash}
+          onClick={log.uploadGcash}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
         >
           Upload
         </button>
       </div>
+  
+    <div id="handling-container">
 
-      <div id="handling-container">
-        <h2>Transaction History</h2>
+            <h2>Transaction History</h2>
 
-        <select id="order-filter" onChange={Ven.applyFilter}>
-          <option value="Paid">Paid</option>
-          <option value="Claimed">Claimed</option>
-          <option value="Printed">Printed</option>
-          <option value="Completed">Completed</option>
-        </select>
+            <select
+                id="order-filter"
+                onChange={Ven.applyFilter}
+            >
+                <option value="Paid">Paid</option>
+                <option value="Claimed">Claimed</option>
+                <option value="Printed">Printed</option>
+                <option value="Completed">Completed</option>
+            </select>
 
-        <div id="orders-list"></div>
-      </div>
+            <div id="orders-list"></div>
+
+        </div>
+
 
       {/* Close Button */}
       <button

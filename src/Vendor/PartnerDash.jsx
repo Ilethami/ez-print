@@ -3,8 +3,9 @@ import ezIcon from "../assets/ezicon.png";
 import store from "../assets/store.png";
 import order from "../assets/order.png";
 import history from "../assets/history.png";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import VendorMap from "./Vendor-Map";
 
-import { Link } from "react-router-dom";
 import StoreDetails from "./Popups/StoreDetails";
 import Orders from "./Popups/OrdersPopup";
 import History from "./Popups/History";

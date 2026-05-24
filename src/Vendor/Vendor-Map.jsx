@@ -123,6 +123,7 @@ export default function VendorMap({
     iconSize: [30, 30],
   });
 
+<<<<<<< HEAD
   // =========================
   // LOADING STATE
   // =========================
@@ -134,6 +135,8 @@ export default function VendorMap({
     );
   }
 
+=======
+>>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
   return (
     <div className="w-full h-full">
       <MapContainer
@@ -148,16 +151,46 @@ export default function VendorMap({
           url="https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=lJtFOqKozfrpRPHc7tbo"
         />
 
+<<<<<<< HEAD
         {/* AUTO CENTER */}
         <ViewPos coords={center} />
 
         {/* 📍 BUTTON */}
         <GoToMyLocationButton />
 
+=======
+        {/* THIS NOW FOLLOWS CLICKED VENDOR OR USER */}
+        <ViewPos coords={center} />
+
+>>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
         {/* USER MARKER */}
         {userCoords && (
           <Marker position={userCoords} icon={usrIcon}>
             <Popup>Your Location</Popup>
+<<<<<<< HEAD
+=======
+          </Marker>
+        )}
+
+        {/* VENDOR MARKERS */}
+        {vendors.map((vendor) => (
+          <Marker
+            key={vendor.id}
+            position={[vendor.latitude, vendor.longitude]}
+            icon={venIcon}
+            eventHandlers={{
+              click: () => {
+                setSelectedVendor(vendor);
+                setCenter([vendor.latitude, vendor.longitude]);
+              },
+            }}
+          >
+            <Popup>
+              <b>{vendor.brand}</b>
+              <br />
+              Status: {vendor.availability}
+            </Popup>
+>>>>>>> 26eb9e1558d00b1e4a02572744487c24f8899772
           </Marker>
         )}
 
