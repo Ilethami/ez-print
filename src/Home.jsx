@@ -1,0 +1,32 @@
+import NavBar from "./NavBar.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PartnerDash from "./Vendor/PartnerDash.jsx";
+import CreateVendor from "./Vendor/VendorCreate.jsx";
+import VendorMap from "./Vendor/Vendor-Map.jsx";
+import VenDash from "./Vendor/Vendor-Login.jsx";
+import ClientLogin from "./Login/ClientLogin.jsx";
+import ClientSignup from "./Login/ClientSignup.jsx";
+import ezIcon from "./assets/ezicon.png";
+import Test from "./Test/Test.jsx";
+import ClientDash from "./Login/ClientDash.jsx";
+
+const vite_env = import.meta.env.VITE_BASE_PATH;
+
+export default function Home() {
+  return (
+    <>
+      <BrowserRouter basename={vite_env}>
+        <NavBar />
+        <Routes>
+          <Route path="/client-login" element={<ClientLogin />} />
+          <Route path="/client-signup" element={<ClientSignup />} />
+          <Route path="/partner-dash" element={<PartnerDash />} />
+          <Route path="/client-dash" element={<ClientDash />} />
+          <Route path="/vendor-signup" element={<CreateVendor />} />
+          <Route path="/vendor-login" element={<VenDash />} />
+          <Route path="/test" element={<Test />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+}
