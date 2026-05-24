@@ -156,6 +156,12 @@ export default function CreateVendor() {
             type="number"
             ph="Enter longitude"
           />
+          <InputField
+            label="Phone Number"
+            id="phone_number"
+            type="number"
+            ph="09123456789"
+          />
 
           {/* BUTTONS */}
           <div className="col-span-2 flex justify-center gap-[15px] mt-[30px] max-[480px]:col-span-1 max-[480px]:flex-col">
