@@ -1,91 +1,123 @@
-import * as ven from "../../Functions/login_vendor";
-
 export default function Orders({
   setActivePanel,
   orders = [],
   refreshOrders,
 }) {
-  const handleClaimed = async (pub_id) => {
-    await ven.set_claimed(pub_id);
-    if (refreshOrders) refreshOrders();
-  };
+  const vendor_token = localStorage.getItem("vendor_token");
 
-  const handleCompleted = async (pub_id) => {
-    await ven.set_completed(pub_id);
-    if (refreshOrders) refreshOrders();
-  };
+  async function setClaimed(pub_id) {
+    await fetch("http://localhost:3001/vendor/set_claimed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pub_id),
+    });
+
+    refreshOrders();
+  }
+
+  async function setCompleted(pub_id) {
+    await fetch("http://localhost:3001/vendor/set_completed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pub_id),
+    });
+
+    refreshOrders();
+  }
+
+  async function downloadFile(file_path, pub_id) {
+    const res = await fetch(
+      "http://localhost:3001/vendor/download_file",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + vendor_token,
+        },
+        body: JSON.stringify({ file_path, pub_id }),
+      },
+    );
+
+    if (!res.ok) return;
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file_path;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+  }
 
   return (
-    <div
-      className="w-full h-full bg-white border border-gray-200
-             rounded-b-lg shadow-lg -z-[1000] p-4 
-             flex flex-col gap-3 overflow-y-auto"
-    >
-      <h3 className="text-lg font-semibold">Orders</h3>
+    <div className="w-full h-full bg-white p-4 flex flex-col gap-3 overflow-y-auto">
+      <h3 className="text-lg font-semibold">Incoming Orders</h3>
 
       {orders.length === 0 ? (
-        <p className="text-gray-500">No orders found</p>
+        <p className="text-gray-500">No orders assigned to you</p>
       ) : (
         orders.map((order) => (
           <div
             key={order.pub_id}
-            className="border border-gray-200 rounded-[10px] p-3 bg-[#fafafa]
-                       flex flex-col gap-1 transition hover:bg-[#f3f7ff] hover:scale-[1.01]"
+            className="border rounded p-3 bg-gray-50 flex flex-col gap-1"
           >
             <p>
               <b>Order ID:</b> {order.pub_id}
             </p>
             <p>
-              <b>File:</b> {order.file_path}
+              <b>User:</b> {order.name}
             </p>
             <p>
               <b>Copies:</b> {order.copies}
             </p>
             <p>
-              <b>Type:</b> {order.color}
+              <b>Size:</b> {order.print_size}
             </p>
             <p>
-              <b>Size:</b> {order.print_size}
+              <b>Color:</b> {order.color}
+            </p>
+            <p>
+              <b>Total:</b> ₱{order.total}
             </p>
             <p>
               <b>Status:</b> {order.status}
             </p>
 
-            {/* Proof */}
-            {order.gcash_url && (
-              <div className="mt-2">
-                <p>
-                  <b>Proof of Payment:</b>
-                </p>
-                <img
-                  src={order.gcash_url}
-                  alt="GCash proof"
-                  className="w-[200px] rounded"
-                />
-              </div>
-            )}
-
-            {/* Buttons */}
             <button
-              onClick={() => handleClaimed(order.pub_id)}
-              className="mt-2 px-3 py-1 bg-black text-white rounded hover:bg-gray-700 transition"
+              onClick={() =>
+                downloadFile(order.file_path, order.pub_id)
+              }
+              className="mt-2 bg-black text-white p-2 rounded"
             >
-              Mark as Claimed
+              Download File
             </button>
 
-            <button
-              onClick={() => handleCompleted(order.pub_id)}
-              className="px-3 py-1 bg-black text-white rounded hover:bg-gray-700 transition"
-            >
-              Complete Order
-            </button>
+            <div className="flex gap-2 mt-2">
+              <button
+                onClick={() => setClaimed(order.pub_id)}
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Claim
+              </button>
+
+              <button
+                onClick={() => setCompleted(order.pub_id)}
+                className="bg-green-600 text-white px-3 py-1 rounded"
+              >
+                Complete
+              </button>
+            </div>
           </div>
         ))
       )}
 
       <button
         onClick={() => setActivePanel(null)}
-        className="mt-2 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
+        className="mt-2 bg-red-500 text-white py-2 rounded"
       >
         Close
       </button>
