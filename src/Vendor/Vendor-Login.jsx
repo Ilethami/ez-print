@@ -10,9 +10,15 @@ export default function VenDash() {
 
     const name = document.getElementById("username").value;
     if (!name.trim()) return alert("Name cannot be empty");
+    
+    const success =
+        await Ven.vendorLogin();
 
-    await Ven.vendorLogin();
-    navigate("/partner-dash");
+    if (!success) {
+        return;
+    }
+
+    navigate("/partner-dash/store");
   }
 
   return (

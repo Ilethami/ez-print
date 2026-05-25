@@ -31,7 +31,7 @@ export async function vendorDetails() {
 
   if (!response.ok) {
     console.error("Failed to load home:", text);
-    return;
+    return false;
   }
 
   const data = JSON.parse(text);
@@ -39,6 +39,8 @@ export async function vendorDetails() {
   console.log("Vendor home:", data);
 
   renderVendorDetails(data);
+
+return true;
 }
 
 export async function renderVendorDetails(data) {
@@ -84,7 +86,7 @@ export async function vendorLogin() {
   if (!response.ok) {
     console.error("Login failed:", text);
     alert("Invalid credentials");
-    return;
+    return false;
   }
 
   const token = JSON.parse(text);
@@ -95,6 +97,8 @@ export async function vendorLogin() {
 
   alert("Login successful!");
   loadVendorHome();
+
+return true;
 }
 
 export async function loadVendorHome() {
@@ -117,7 +121,7 @@ export async function loadVendorHome() {
 
   if (!response.ok) {
     console.error("Failed to load home:", text);
-    return;
+    return false;
   }
 
   const data = JSON.parse(text);
@@ -125,6 +129,8 @@ export async function loadVendorHome() {
   console.log("Vendor home:", data);
 
   renderVendorHome(data);
+
+    return true;
 }
 
 export function renderVendorHome(data) {
@@ -184,12 +190,14 @@ export async function loadOrders() {
 
   if (!response.ok) {
     console.error("Failed:", text);
-    return;
+    return false;
   }
 
   const orders = JSON.parse(text);
 
   renderOrders(orders);
+
+return true;
 }
 
 export function renderOrders(orders) {
@@ -268,12 +276,14 @@ export async function acceptOrder(pub_id) {
 
   if (!response.ok) {
     console.error("Accept failed:", text);
-    return;
+    return false;
   }
 
   console.log("Accepted:", text);
 
   loadOrders();
+
+return true;
 }
 
 export async function rejectOrder(pub_id) {
@@ -292,12 +302,14 @@ export async function rejectOrder(pub_id) {
 
   if (!response.ok) {
     console.error("Reject failed:", text);
-    return;
+    return false;
   }
 
   console.log("Rejected:", text);
 
   loadOrders();
+
+return true;
 }
 
 export async function see_reciept(pub_id) {
@@ -307,7 +319,7 @@ export async function see_reciept(pub_id) {
 
   if (!response.ok) {
     console.error("Failed to load GCash QR");
-    return;
+    return false;
   }
 
   const blob = await response.blob();
@@ -354,13 +366,14 @@ export async function loadHandlingOrders() {
 
   if (!response.ok) {
     console.error("Failed:", text);
-    return;
+    return false;
   }
 
   const orders = JSON.parse(text);
   renderHandlingOrders(orders);
 
   console.log(orders);
+return true;
 }
 
 export function applyFilter() {
@@ -516,11 +529,12 @@ export async function updateAvailability() {
   if (!response.ok) {
     console.error("Failed:", text);
     alert("Failed to update");
-    return;
+    return false;
   }
 
   console.log("Updated:", value);
   alert("Availability updated!");
+return true
 }
 
 export async function uploadGcash() {
@@ -536,7 +550,7 @@ export async function uploadGcash() {
 
   if (!file) {
     alert("Select a file");
-    return;
+    return false;
   }
 
   const formData = new FormData();
@@ -587,7 +601,7 @@ export async function downloadFile(file_path, pub_id) {
 
   if (!response.ok) {
     console.error("Download failed");
-    return;
+    return false;
   }
 
   const blob = await response.blob();
@@ -605,6 +619,8 @@ export async function downloadFile(file_path, pub_id) {
   window.URL.revokeObjectURL(url);
 
   console.log(file_path);
+
+return true;
 }
 
 export async function logout_vendor() {
@@ -617,9 +633,11 @@ export async function logout_vendor() {
 
   if (!res.ok) {
     cosole.log("try again");
-    return;
+    return false;
   }
 
   localStorage.removeItem("vendor_token");
   window.location.href = <Link to="/" />;
+
+    return true;
 }

@@ -11,7 +11,7 @@ export default function StoreDetails() {
         const token = localStorage.getItem("vendor_token");
 
         const vendorRes = await fetch(
-          "/api/vendor/home",
+          "/api/vendor/vendor_details",
           {
             method: "GET",
             headers: {
@@ -39,12 +39,10 @@ export default function StoreDetails() {
           },
         );
 
-        const orders = await ordersRes.json();
-
-        const count = (orders || []).filter(
-          (o) => o.vendor === currentVendor?.pub_id,
-        ).length;
-
+        const count = Array.isArray(orders)
+        ? orders.length
+        : 0;
+    
         setTotalOrders(count);
       } catch (err) {
         console.error("StoreDetails error:", err);

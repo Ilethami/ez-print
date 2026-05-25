@@ -11,7 +11,13 @@ export default function ClientLogin() {
     const name = document.getElementById("login-name").value;
     if (!name.trim()) return alert("Name cannot be empty");
 
-    await c.login();
+    const success =
+        await c.login();
+
+    if (!success) {
+        return;
+    }
+
     navigate("/client-dash");
   }
 

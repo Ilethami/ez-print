@@ -10,15 +10,15 @@ export default function ClientDash() {
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [center, setCenter] = useState(null);
 
-  // ✅ FIX: changed from 0 → "" so backspace works
   const [copies, setCopies] = useState("");
-
   const [color, setColor] = useState("bw");
   const [printSize, setPrintSize] = useState("A4");
 
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+
+  const [showModal, setShowModal] = useState(false); 
 
   const [showOrders, setShowOrders] = useState(false);
 
@@ -50,7 +50,6 @@ export default function ClientDash() {
     fetchVendors();
   }, []);
 
-  // TOTAL PRICE (preview only)
   const total =
     selectedVendor &&
     Number(copies) *
@@ -58,15 +57,12 @@ export default function ClientDash() {
         ? selectedVendor.bwRate
         : selectedVendor.colorRate);
 
-  // SELECT VENDOR
   async function handleSelectVendor(vendor) {
     await o.selectVendor(vendor.id);
-
     setSelectedVendor(vendor);
     setCenter([vendor.latitude, vendor.longitude]);
   }
 
-  // FILE CHANGE
   function handleFileChange(e) {
     const selected = e.target.files[0];
     if (!selected) return;
@@ -74,13 +70,10 @@ export default function ClientDash() {
     setFile(selected);
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setFilePreview(reader.result);
-    };
+    reader.onloadend = () => setFilePreview(reader.result);
     reader.readAsDataURL(selected);
   }
 
-  // UPLOAD FILE
   async function handleUploadFile() {
     if (!file || !selectedVendor) return;
 
@@ -99,34 +92,23 @@ export default function ClientDash() {
     const data = await res.json();
 
     setUploadedFile(data);
-
     localStorage.setItem("uploaded_file", data);
 
     alert("File uploaded!");
   }
 
-  // CREATE ORDER
   async function handleCreateOrder() {
-    if (!selectedVendor) {
-      return alert("Select a vendor first");
-    }
-
-    if (!uploadedFile) {
-      return alert("Upload a file first");
-    }
-
-    if (!copies || Number(copies) <= 0) {
+    if (!selectedVendor) return alert("Select a vendor first");
+    if (!uploadedFile) return alert("Upload a file first");
+    if (!copies || Number(copies) <= 0)
       return alert("Enter valid copies");
-    }
 
     try {
       const totalRes = await fetch(
         "/api/order/total",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             copies: Number(copies),
             vendor: selectedVendor.id,
@@ -134,10 +116,6 @@ export default function ClientDash() {
           }),
         },
       );
-
-      if (!totalRes.ok) {
-        return alert("Failed to calculate total");
-      }
 
       const totalData = await totalRes.json();
 
@@ -148,6 +126,9 @@ export default function ClientDash() {
         color === "color",
         totalData,
       );
+    
+        setShowModal(true);
+    
     } catch (err) {
       console.error(err);
       alert("Failed to create order");
@@ -155,33 +136,36 @@ export default function ClientDash() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#f6f5f5] text-[#33313B]">
       {/* HEADER */}
-      <div className="absolute top-0 w-full bg-[#F6f5f5] px-[50px] py-[15px] shadow flex justify-between items-center h-20">
-        <Link to="/">
-          <img src={ezIcon} alt="EzPrint" />
+      <div className="absolute top-0 w-full h-20 bg-[#f6f5f5] border-b border-[#33313B]/10 px-[50px] flex justify-between items-center shadow-sm z-20">
+        <Link to="/" className="cursor-pointer">
+          <img src={ezIcon} alt="EzPrint" className="h-10" />
         </Link>
 
-        <p className="text-lg font-bold">Welcome to Ez-Print</p>
+        <p className="text-lg font-semibold">Welcome to Ez-Print</p>
       </div>
 
       {/* SIDEBAR */}
-      <div className="mt-20 w-[300px] h-[calc(100vh-80px)] bg-gray-100 border-r flex flex-col">
+      <div className="mt-20 w-[300px] h-[calc(100vh-80px)] bg-white border-r border-[#33313B]/10 flex flex-col z-10">
         <div className="p-4 flex flex-col items-center overflow-y-auto flex-1">
-          <h2 className="font-bold mb-3">Vendors</h2>
+          <h2 className="font-bold mb-4">Vendors</h2>
 
           {vendors.map((v) => (
             <div
               key={v.id}
               onClick={() => handleSelectVendor(v)}
-              className={`p-3 mb-2 w-[200px] cursor-pointer rounded border hover:bg-blue-100 ${
-                selectedVendor?.id === v.id
-                  ? "bg-blue-100"
-                  : "bg-white"
-              }`}
+              className={`
+                w-[220px] p-3 mb-3 cursor-pointer rounded-xl border transition
+                ${
+                  selectedVendor?.id === v.id
+                    ? "bg-[#e3c4ab]/30 border-[#e3c4ab]"
+                    : "bg-white border-[#33313B]/10 hover:bg-[#e3c4ab]/20"
+                }
+              `}
             >
               <p className="font-semibold">{v.brand}</p>
-              <p className="text-sm">{v.availability}</p>
+              <p className="text-sm opacity-70">{v.availability}</p>
             </div>
           ))}
         </div>
@@ -189,14 +173,14 @@ export default function ClientDash() {
         <div className="p-4">
           <button
             onClick={() => setShowOrders(true)}
-            className="w-full p-3 bg-gray-300 hover:bg-gray-400 rounded font-semibold"
+            className="w-full p-3 rounded-lg bg-[#33313B] text-white hover:bg-[#4592af] cursor-pointer transition"
           >
             Orders
           </button>
         </div>
       </div>
 
-      {/* MAP */}
+      {/* MAP (FIXED Z-INDEX STACKING) */}
       <div className="flex-1 mt-20 relative z-0">
         <VendorMap
           vendors={vendors}
@@ -208,27 +192,27 @@ export default function ClientDash() {
 
       {/* RIGHT PANEL */}
       {selectedVendor && (
-        <div className="mt-20 w-[350px] h-[calc(100vh-80px)] bg-white border-l p-5 overflow-y-auto">
-          <div className="flex justify-between">
+        <div className="mt-20 w-[350px] h-[calc(100vh-80px)] bg-white border-l border-[#33313B]/10 p-5 overflow-y-auto z-10">
+          <div className="flex justify-between mb-3">
             <h2 className="text-xl font-bold">
               {selectedVendor.brand}
             </h2>
 
             <button
               onClick={() => setSelectedVendor(null)}
-              className="hover:cursor-pointer"
+              className="cursor-pointer"
             >
               ✕
             </button>
           </div>
 
-          <p>Status: {selectedVendor.availability}</p>
-          <p>BW Rate: ₱{selectedVendor.bwRate}</p>
-          <p>Color Rate: ₱{selectedVendor.colorRate}</p>
+          <p className="text-sm opacity-70 mb-3">
+            Status: {selectedVendor.availability}
+          </p>
 
           {/* UPLOAD */}
-          <div className="mt-5">
-            <h3 className="font-semibold">Upload File</h3>
+          <div className="mb-5">
+            <h3 className="font-semibold mb-2">Upload File</h3>
 
             <input
               type="file"
@@ -239,74 +223,64 @@ export default function ClientDash() {
 
             <label
               htmlFor="fileUpload"
-              className="mt-2 flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition"
+              className="flex flex-col items-center justify-center border border-dashed border-[#33313B]/30 rounded-xl p-4 cursor-pointer bg-[#f6f5f5] hover:bg-[#e3c4ab]/20 transition"
             >
               {filePreview ? (
                 <img
                   src={filePreview}
-                  className="w-full h-40 object-contain rounded"
+                  className="w-full h-40 object-contain"
                 />
               ) : (
-                <p className="text-gray-500 font-semibold">
-                  Click to upload file
-                </p>
+                <p className="opacity-60">Click to upload file</p>
               )}
             </label>
 
             <button
               onClick={handleUploadFile}
-              className="mt-3 w-full bg-gray-200 p-2 hover:bg-gray-300"
+              className="mt-3 w-full p-2 rounded-lg bg-[#33313B] text-white hover:bg-[#e3c4ab] hover:text-[#33313B] transition cursor-pointer"
             >
               Upload
             </button>
           </div>
 
           {/* ORDER */}
-          <div className="mt-5">
-            <h3 className="font-semibold">Order</h3>
-
-            <label className="block mt-3">Copies</label>
+          <div>
+            <h3 className="font-semibold mb-2">Order</h3>
 
             <input
               type="number"
               min="1"
               value={copies}
               onChange={(e) => setCopies(e.target.value)}
-              className="border w-full p-2 mt-1"
+              className="border border-[#33313B]/20 w-full p-2 rounded-lg outline-none focus:border-[#e3c4ab]"
             />
-
-            <label className="block mt-3">Print Size</label>
 
             <select
               value={printSize}
               onChange={(e) => setPrintSize(e.target.value)}
-              className="border w-full p-2 mt-1"
+              className="border w-full p-2 mt-2 rounded-lg cursor-pointer focus:border-[#4592af]"
             >
-              <option value="A4">A4</option>
-              <option value="Short">Short</option>
-              <option value="Long">Long</option>
-              <option value="Letter">Letter</option>
-              <option value="Legal">Legal</option>
+              <option>A4</option>
+              <option>Short</option>
+              <option>Long</option>
+              <option>Letter</option>
+              <option>Legal</option>
             </select>
-
-            <label className="block mt-3">Print Type</label>
 
             <select
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="border w-full p-2 mt-1"
+              className="border w-full p-2 mt-2 rounded-lg cursor-pointer focus:border-[#4592af]"
             >
               <option value="bw">BW</option>
               <option value="color">Color</option>
             </select>
 
-            <p className="mt-3 font-bold">
-              Estimated Total: ₱{total || 0}
-            </p>
+            <p className="mt-3 font-bold">Total: ₱{total || 0}</p>
 
             <button
               onClick={handleCreateOrder}
-              className="mt-3 w-full bg-blue-600 text-white p-2"
+              className="mt-3 w-full p-2 rounded-lg bg-[#4592af] text-white hover:bg-[#33313B] transition cursor-pointer"
             >
               Submit Order
             </button>
@@ -314,13 +288,13 @@ export default function ClientDash() {
         </div>
       )}
 
-      {/* ORDERS MODAL */}
+      {/* ORDERS MODAL (ABOVE EVERYTHING INCLUDING MAP) */}
       {showOrders && (
         <div className="absolute inset-0 z-[9999] bg-black/40 flex items-center justify-center">
           <div className="w-[90%] h-[90%] bg-white rounded-xl shadow-xl relative overflow-hidden">
             <button
               onClick={() => setShowOrders(false)}
-              className="absolute top-3 right-3 text-red-500 font-bold text-xl z-50"
+              className="absolute top-3 right-3 text-red-500 font-bold text-xl cursor-pointer"
             >
               ✕
             </button>

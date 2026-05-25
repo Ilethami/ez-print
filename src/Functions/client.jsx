@@ -29,7 +29,7 @@ export async function signup() {
 
   if (!response.ok) {
     console.error("Signup failed:", text);
-    return;
+    return false;
   }
 
   const res = JSON.parse(text);
@@ -39,6 +39,8 @@ export async function signup() {
   alert("Account created!");
 
   window.location.href = "/client-login";
+
+return true;
 }
 
 export async function login() {
@@ -60,7 +62,7 @@ export async function login() {
   if (!response.ok) {
     console.error("Login failed:", text);
     alert("Invalid credentials");
-    return;
+    return false;
   }
 
   console.log("token :", token);
@@ -71,6 +73,8 @@ export async function login() {
   alert("Welcome Back");
 
   loadUserOrders();
+
+return true
 }
 
 export function apply_UserFilter() {
@@ -105,7 +109,7 @@ export async function loadUserOrders(setPaymentOpen, setPaymentData) {
 
   if (!response.ok) {
     console.error("Failed to load orders:", text);
-    return;
+    return false;
   }
 
   const orders = JSON.parse(text);
@@ -217,7 +221,7 @@ export async function submitReceipt() {
 
   if (!response.ok) {
     alert("Upload failed");
-    return;
+    return false;
   }
 
   alert("Receipt submitted!");

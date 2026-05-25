@@ -163,7 +163,7 @@ export async function createOrder(
   alert("Order created successfully!");
   localStorage.removeItem("uploaded_file");
   localStorage.removeItem("selected_vendor");
-  window.location.href = "/client-dash";
+  window.location.href = "/client-dash/";
 }
 
 get_vendors();
